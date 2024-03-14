@@ -1,0 +1,97 @@
+package com.example.habittracker.adapters
+
+import android.content.Context
+import android.graphics.Color
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import com.example.habittracker.R
+import com.example.habittracker.data.models.Habit
+import com.example.habittracker.databinding.ItemHabitatDataBinding
+
+class HabitAdapter(
+    context: Context,
+    private val clickListener: OnRecyclerItemClicked,
+) : RecyclerView.Adapter<HabitAdapter.ViewHolder>() {
+
+    private var habits = mutableListOf<Habit>()
+
+    fun setData(data: MutableList<Habit>) {
+        this.habits = data
+    }
+
+    fun setNewData(newData: MutableList<Habit>) {
+        Log.i("setNewData OLD", habits.toString())
+        Log.i("setNewData NEW", newData.toString())
+        val diffCallback = HabitCallback(habits, newData)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        habits.clear()
+        habits.addAll(newData)
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        return ViewHolder(inflater.inflate(R.layout.item_habitat_data, parent, false))
+    }
+
+    override fun getItemCount(): Int = habits.size
+
+    private fun getItem(position: Int): Habit = habits[position]
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind(getItem(position))
+        holder.itemView.setOnClickListener {
+            clickListener.onClick(habits[position])
+        }
+    }
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val binding = ItemHabitatDataBinding.bind(view)
+
+        fun bind(habit: Habit) = with(binding) {
+            tvHabitName.text = habit.name
+            tvHabitDescription.text = habit.description
+            tvHabitType.text = habit.type.description
+            tvHabitFrequency.text = context.getString(R.string.week, habit.frequency.toString())
+            viewColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(habit.color, 1f, 1f)))
+            tvHabitPriority.text = habit.priority.toString()
+        }
+    }
+
+    enum class HabitType() {
+        LEARN,
+        HEALTH,
+        SPORT,
+        SOCIAL;
+
+        lateinit var description: String
+            private set
+
+        companion object {
+            fun initialize(context: Context) {
+                entries.forEach { habitType ->
+                    habitType.description = context.getString(
+                        when (habitType) {
+                            LEARN -> R.string.learn
+                            HEALTH -> R.string.health
+                            SPORT -> R.string.sport
+                            SOCIAL -> R.string.social
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+interface OnRecyclerItemClicked {
+    fun onClick(habit: Habit)
+}
+
+private val RecyclerView.ViewHolder.context
+    get() = this.itemView.context

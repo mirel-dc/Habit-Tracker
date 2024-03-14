@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border">
+
+    <TextView
+        android:id="@+id/tvHabitName"
+        style="@style/CasualTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Learn Kotlin" />
+
+    <TextView
+        android:id="@+id/tvHabitDescription"
+        style="@style/CasualTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier"
+        tools:text="Learn kotlin from guides " />
+
+
+    <TextView
+        android:id="@+id/tvPriorityHolder"
+        style="@style/CasualTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:text="@string/priority"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHabitPriority"
+        app:layout_constraintEnd_toStartOf="@+id/tvHabitPriority"
+        app:layout_constraintTop_toTopOf="@+id/tvHabitPriority" />
+
+    <TextView
+        android:id="@+id/tvHabitPriority"
+        style="@style/CasualTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/tvHabitTypeHolder"
+        style="@style/CasualTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/habit_type"
+        app:layout_constraintStart_toStartOf="@+id/tvHabitName"
+        app:layout_constraintTop_toBottomOf="@+id/tvHabitName" />
+
+    <TextView
+        android:id="@+id/tvHabitType"
+        style="@style/CasualTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHabitTypeHolder"
+        app:layout_constraintStart_toEndOf="@+id/tvHabitTypeHolder"
+        app:layout_constraintTop_toTopOf="@+id/tvHabitTypeHolder"
+        tools:text="Learn" />
+
+    <TextView
+        android:id="@+id/tvHabitFrequency"
+        style="@style/CasualTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvHabitDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvHabitDescription"
+        tools:text="2 / Week" />
+
+    <View
+        android:id="@+id/viewColor"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="12dp"
+        android:background="#FF00FF"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!--
+        <TextView
+            android:id="@+id/tv_habit_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:layout_editor_absoluteY="42dp"
+            tools:text="#FF00FF" />
+    -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tvHabitName,tvHabitType,viewColor, tvHabitPriority" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

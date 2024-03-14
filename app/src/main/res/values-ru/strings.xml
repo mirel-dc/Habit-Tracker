@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Habit Tracker</string>
+    <string name="create_new_habitat">Создать новую привычку</string>
+    <string name="learn">Учёба</string>
+    <string name="health">Здоровье</string>
+    <string name="sport">Спорт</string>
+    <string name="social">Социальность</string>
+    <string name="habit_name">Название привычки</string>
+    <string name="habit_description">Описание привычки</string>
+    <string name="submit">Подтвердить</string>
+    <string name="quantity_of_habit_fulfillment">Количество выполнений Привычки</string>
+    <string name="times_per_week">Повторений в Неделю</string>
+    <string name="choose_priority">Выберите Приоритет:</string>
+    <string name="required">Необходимо заполнить</string>
+    <string name="invalid_form">Неправильная форма</string>
+    <string name="nameRequire">"\n\n Название привычки: "</string>
+    <string name="frequencyRequired">"\n\n Частота привычки: "</string>
+    <string name="execution_quantityRequired">"\n\n Количество выполнений: "</string>
+    <string name="cannot_be_empty">Не может быть Пустым</string>
+    <string name="cannot_be_more_then_7">Не может быть больше 7</string>
+    <string name="current_color_hsv_rgb">Текущий цвет: HSV(%1$.2f,1,1); RGB(%2$d,%3$d,%4$d)</string>
+    <string name="priority">"Приоритет: "</string>
+    <string name="week">%1$s / в Неделю</string>
+    <string name="habit_type">Тип Привычки:</string>
+</resources>
