@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         HabitAdapter.HabitType.initialize(applicationContext)
 
-       // initListTEST()
+        initListTEST()
 
         val recycler = binding.rvHabit
         _adapter = HabitAdapter(this, clickListener)
