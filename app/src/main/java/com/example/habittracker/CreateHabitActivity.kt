@@ -15,8 +15,6 @@ import com.example.habittracker.data.models.Habit
 import com.example.habittracker.databinding.ActivityCreateHabitBinding
 import com.example.habittracker.domain.HabitList
 
-//Todo разделить валидацию от внешки
-
 class CreateHabitActivity : AppCompatActivity() {
     private var _binding: ActivityCreateHabitBinding? = null
     private val binding
