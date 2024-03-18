@@ -18,11 +18,19 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding
-        get() = _binding ?: throw  IllegalStateException("Binding for ActivityMainBinding must not be null")
+        get() = _binding
+            ?: throw IllegalStateException("Binding for ActivityMainBinding must not be null")
 
-    private var _adapter: HabitAdapter?= null
+    private var _adapter: HabitAdapter? = null
     private val adapter
-        get() = _adapter ?: throw  IllegalStateException("Adapter must not be null")
+        get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
+
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                adapter.setNewData(HabitList.getHabits())
+            }
+        }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +38,13 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        HabitAdapter.HabitType.initialize(applicationContext)
 
         initListTEST()
 
+
         val recycler = binding.rvHabit
         _adapter = HabitAdapter(this, clickListener)
-        adapter.setData(HabitList().getHabits())
+        adapter.setData(HabitList.getHabits())
         recycler.adapter = adapter
         recycler.addItemDecoration(SpacingItemDecorator(16))
         recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
@@ -63,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(NAME, habit.name)
         intent.putExtra(DESCRIPTION, habit.description)
         intent.putExtra(PRIORITY, habit.priority)
-        intent.putExtra(TYPE, habit.type.description)
+        intent.putExtra(TYPE, getString(habit.type.resId))
         intent.putExtra(EXECUTIONQUANTITY, habit.executionQuantity)
         intent.putExtra(FREQUENCY, habit.frequency)
         intent.putExtra(COLOR, habit.color)
@@ -76,15 +84,9 @@ class MainActivity : AppCompatActivity() {
         resultLauncher.launch(intent)
     }
 
-    private var resultLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                adapter.setNewData(HabitList().getHabits())
-            }
-        }
 
     private fun initListTEST() {
-        HabitList().createHabit(
+        HabitList.createHabit(
             Habit(
                 name = "Выучить Kotlin",
                 description = "Выучить Kotlin по гайдам на ютубе",
@@ -96,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        HabitList().createHabit(
+        HabitList.createHabit(
             Habit(
                 name = "Бегать по утрам",
                 description = "Бегать каждое утро в парке под домом",

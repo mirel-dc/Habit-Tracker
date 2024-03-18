@@ -2,7 +2,6 @@ package com.example.habittracker.adapters
 
 import android.content.Context
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,8 +23,6 @@ class HabitAdapter(
     }
 
     fun setNewData(newData: MutableList<Habit>) {
-        Log.i("setNewData OLD", habits.toString())
-        Log.i("setNewData NEW", newData.toString())
         val diffCallback = HabitCallback(habits, newData)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         habits.clear()
@@ -56,36 +53,18 @@ class HabitAdapter(
         fun bind(habit: Habit) = with(binding) {
             tvHabitName.text = habit.name
             tvHabitDescription.text = habit.description
-            tvHabitType.text = habit.type.description
+            tvHabitType.text = context.getString(habit.type.resId)
             tvHabitFrequency.text = context.getString(R.string.week, habit.frequency.toString())
             viewColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(habit.color, 1f, 1f)))
             tvHabitPriority.text = habit.priority.toString()
         }
     }
 
-    enum class HabitType() {
-        LEARN,
-        HEALTH,
-        SPORT,
-        SOCIAL;
-
-        lateinit var description: String
-            private set
-
-        companion object {
-            fun initialize(context: Context) {
-                entries.forEach { habitType ->
-                    habitType.description = context.getString(
-                        when (habitType) {
-                            LEARN -> R.string.learn
-                            HEALTH -> R.string.health
-                            SPORT -> R.string.sport
-                            SOCIAL -> R.string.social
-                        }
-                    )
-                }
-            }
-        }
+    enum class HabitType(val resId  : Int) {
+        LEARN(R.string.learn),
+        HEALTH(R.string.health),
+        SPORT(R.string.sport),
+        SOCIAL(R.string.social);
     }
 }
 

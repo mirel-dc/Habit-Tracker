@@ -2,9 +2,8 @@ package com.example.habittracker.domain
 
 import com.example.habittracker.data.models.Habit
 
-private var habitList = mutableListOf<Habit>()
-
-class HabitList {
+object HabitList{
+    private var habitList = mutableListOf<Habit>()
 
     fun getHabits(): MutableList<Habit> {
         return habitList.map { it.copy() }.toMutableList() //Deep copy for diff Util

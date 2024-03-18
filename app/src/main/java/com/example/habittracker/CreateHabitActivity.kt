@@ -15,6 +15,8 @@ import com.example.habittracker.data.models.Habit
 import com.example.habittracker.databinding.ActivityCreateHabitBinding
 import com.example.habittracker.domain.HabitList
 
+//Todo разделить валидацию от внешки
+
 class CreateHabitActivity : AppCompatActivity() {
     private var _binding: ActivityCreateHabitBinding? = null
     private val binding
@@ -35,7 +37,7 @@ class CreateHabitActivity : AppCompatActivity() {
         binding.spPriority.adapter = prioritiesArrayAdapter
 
         setHabit()
-        createColorBlock(200, 50, 32)
+        createColorBlock()
 
         val habitName = binding.etName.text.toString() //Store value for diffUtils (name is a key)
         submitOnClickListener(habitName)
@@ -47,7 +49,45 @@ class CreateHabitActivity : AppCompatActivity() {
         habitFrequencyFocusListener()
     }
 
-    private fun createColorBlock(squareSide: Int, squareMargin: Int, squareQuantity: Int) {
+
+    //init group
+    private fun isChange(): Boolean {
+        return intent.getBooleanExtra(CHANGE, false)
+    }
+
+    private fun setHabit() = with(binding) {
+        if (isChange()) {
+            etName.setText(intent.getStringExtra(NAME))
+            etDescription.setText(intent.getStringExtra(DESCRIPTION))
+            setRadioGroup(intent.getStringExtra(TYPE))
+            spPriority.setSelection(intent.getIntExtra(PRIORITY, 1) - 1)
+            etExecutionQuantity.setText(
+                intent.getIntExtra(EXECUTIONQUANTITY, 1).toString()
+            )
+            etFrequency.setText(intent.getIntExtra(FREQUENCY, 1).toString())
+        } else {
+            containerName.helperText = getString(R.string.required)
+            containerFrequency.helperText = getString(R.string.required)
+            containerExecutionQuantity.helperText = getString(R.string.required)
+        }
+    }
+
+    private fun setRadioGroup(typeDescription: String?) = with(binding) {
+        when (typeDescription) {
+            getString(HabitAdapter.HabitType.LEARN.resId) -> rbLearn.isChecked = true
+            getString(HabitAdapter.HabitType.SPORT.resId) -> rbSport.isChecked = true
+            getString(HabitAdapter.HabitType.HEALTH.resId) -> rbHealth.isChecked = true
+            getString(HabitAdapter.HabitType.SOCIAL.resId) -> rbSocial.isChecked = true
+        }
+    }
+
+
+    //ColorPicker view group
+    private fun createColorBlock() {
+        val squareSide = 200
+        val squareMargin = 50
+        val squareQuantity = 16
+
         val linearLayout = LinearLayout(this)
         val linearLayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -105,7 +145,7 @@ class CreateHabitActivity : AppCompatActivity() {
             )
     }
 
-
+    //RecyclerView on item click listener
     private fun submitOnClickListener(habitName: String) {
         binding.btnSubmit.setOnClickListener {
             if (submitForm()) {
@@ -121,58 +161,10 @@ class CreateHabitActivity : AppCompatActivity() {
         }
     }
 
-    private fun submitForm(): Boolean {
-        //ClearFocus for all helperTexts to set
-        binding.etName.clearFocus()
-        binding.etExecutionQuantity.clearFocus()
-        binding.etFrequency.clearFocus()
 
-        val validName = binding.containerName.helperText == null
-        val validFrequency = binding.containerFrequency.helperText == null
-        val validQuantity = binding.containerExecutionQuantity.helperText == null
-
-        return if (validName && validFrequency && validQuantity) {
-            true
-        } else {
-            invalidForm()
-            false
-        }
-    }
-
-    private fun invalidForm() {
-        var message = ""
-        if (binding.containerName.helperText != null)
-            message += getString(R.string.nameRequire) + binding.containerName.helperText
-        if (binding.containerFrequency.helperText != null)
-            message += getString(R.string.frequencyRequired) + binding.containerFrequency.helperText
-        if (binding.containerExecutionQuantity.helperText != null)
-            message += getString(R.string.execution_quantityRequired) + binding.containerExecutionQuantity.helperText
-
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.invalid_form))
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.okay)) { _, _ -> }.show()
-    }
-
-    private fun setHabit() = with(binding) {
-        if (isChange()) {
-            etName.setText(intent.getStringExtra(NAME))
-            etDescription.setText(intent.getStringExtra(DESCRIPTION))
-            setRadioGroup(intent.getStringExtra(TYPE))
-            spPriority.setSelection(intent.getIntExtra(PRIORITY, 1) - 1)
-            etExecutionQuantity.setText(
-                intent.getIntExtra(EXECUTIONQUANTITY, 1).toString()
-            )
-            etFrequency.setText(intent.getIntExtra(FREQUENCY, 1).toString())
-        } else {
-            containerName.helperText = getString(R.string.required)
-            containerFrequency.helperText = getString(R.string.required)
-            containerExecutionQuantity.helperText = getString(R.string.required)
-        }
-    }
-
+    //DataList actions
     private fun updateHabit(wasHabitName: String) = with(binding) {
-        HabitList().updateHabit(
+        HabitList.updateHabit(
             wasHabitName, Habit(
                 name = etName.text.toString(),
                 description = etDescription.text.toString(),
@@ -186,7 +178,7 @@ class CreateHabitActivity : AppCompatActivity() {
     }
 
     private fun createHabit() = with(binding) {
-        HabitList().createHabit(
+        HabitList.createHabit(
             Habit(
                 name = etName.text.toString(),
                 description = etDescription.text.toString(),
@@ -199,18 +191,6 @@ class CreateHabitActivity : AppCompatActivity() {
         )
     }
 
-    private fun isChange(): Boolean {
-        return intent.getBooleanExtra("change", false)
-    }
-
-    private fun setRadioGroup(typeDescription: String?) = with(binding) {
-        when (typeDescription) {
-            HabitAdapter.HabitType.LEARN.description -> rbLearn.isChecked = true
-            HabitAdapter.HabitType.SPORT.description -> rbSport.isChecked = true
-            HabitAdapter.HabitType.HEALTH.description -> rbHealth.isChecked = true
-            HabitAdapter.HabitType.SOCIAL.description -> rbSocial.isChecked = true
-        }
-    }
 
     private fun getHabitType(): HabitAdapter.HabitType = with(binding) {
         return when (true) {
@@ -222,6 +202,39 @@ class CreateHabitActivity : AppCompatActivity() {
                 HabitAdapter.HabitType.LEARN
             }
         }
+    }
+
+
+    //Validate group
+    private fun submitForm(): Boolean {
+        val validName = binding.etName.text?.isNotEmpty() == true
+        val validFrequency = binding.etFrequency.text?.isNotEmpty() == true
+        val validQuantity = if (binding.etExecutionQuantity.text?.isNotEmpty() == true)
+            (binding.etExecutionQuantity.text.toString().toInt() <= 7) else false
+
+        return if (validName && validFrequency && validQuantity) {
+            true
+        } else {
+            invalidForm()
+            false
+        }
+    }
+
+    private fun invalidForm() {
+        var message = ""
+        if (binding.etName.text?.isNotEmpty() == false)
+            message += getString(R.string.nameRequire) + getString(R.string.cannot_be_empty)
+        if (binding.etExecutionQuantity.text?.isNotEmpty() == false)
+            message += getString(R.string.execution_quantityRequired) + getString(R.string.cannot_be_empty)
+        if (binding.etFrequency.text?.isNotEmpty() == false)
+            message += getString(R.string.frequencyRequired) + getString(R.string.cannot_be_empty)
+        else if (binding.etFrequency.text.toString().toInt() > 7)
+            message += getString(R.string.frequencyRequired) + getString(R.string.cannot_be_more_then_7)
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.invalid_form))
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.okay)) { _, _ -> }.show()
     }
 
     private fun habitFrequencyFocusListener() {
