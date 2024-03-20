@@ -2,6 +2,9 @@
     <string name="app_name">Habit Tracker</string>
     <string name="create_new_habitat">Create new habitat</string>
 
+    <string name="open_nav">Open Navigation Drawer</string>
+    <string name="close_nav">Close Navigation Drawer</string>
+
     <!-- HabitType Descriptions start -->
     <string name="good_habit">Good</string>
     <string name="bad_habit">Good</string>
@@ -32,7 +35,12 @@
     <string name="priority">Priority:</string>
     <string name="week">%1$s / Week</string>
     <string name="habit_type">Habit Type:</string>
-    <!-- Habit Item end -->
+    <!-- Habit Item start -->
+
+    <!-- Navigation Item start -->
+    <string name="home">Home</string>
+    <string name="info">Info</string>
+    <!-- Navigation Item end -->
 
 
 </resources>

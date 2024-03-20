@@ -25,6 +25,7 @@
         android:backgroundTint="@color/buttonColor"
         android:contentDescription="@string/create_new_habitat"
         android:src="@drawable/ic_plus_24"
+        app:tint="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

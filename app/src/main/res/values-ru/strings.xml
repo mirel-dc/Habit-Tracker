@@ -20,6 +20,10 @@
     <string name="priority">"Приоритет: "</string>
     <string name="week">%1$s / в Неделю</string>
     <string name="habit_type">Тип Привычки:</string>
+    <string name="open_nav">Открыть Навигацию</string>
+    <string name="close_nav">Закрыть Навигацию</string>
     <string name="good_habit">Полезная</string>
     <string name="bad_habit">Вредная</string>
+    <string name="home">Домашняя страница</string>
+    <string name="info">Информация</string>
 </resources>

@@ -89,7 +89,7 @@ class CreateHabitFragment : Fragment() {
             etName.setText(changeHabit.name)
             etDescription.setText(changeHabit.description)
             setRadioGroup(getString(changeHabit.type.resId))
-            spPriority.setSelection(changeHabit.priority)
+            spPriority.setSelection(changeHabit.priority - 1)
             etExecutionQuantity.setText(changeHabit.executionQuantity.toString())
             etFrequency.setText(changeHabit.frequency.toString())
         } else {
@@ -179,7 +179,6 @@ class CreateHabitFragment : Fragment() {
                 } else {
                     createHabit()
                 }
-
                 activity?.supportFragmentManager?.popBackStack()
             }
         }
