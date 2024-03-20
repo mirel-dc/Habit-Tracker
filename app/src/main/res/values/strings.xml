@@ -3,10 +3,8 @@
     <string name="create_new_habitat">Create new habitat</string>
 
     <!-- HabitType Descriptions start -->
-    <string name="learn">Learn</string>
-    <string name="health">Health</string>
-    <string name="sport">Sport</string>
-    <string name="social">Social</string>
+    <string name="good_habit">Good</string>
+    <string name="bad_habit">Good</string>
     <!-- HabitType Descriptions end -->
 
     <!-- Create Habit Page start -->
@@ -35,4 +33,6 @@
     <string name="week">%1$s / Week</string>
     <string name="habit_type">Habit Type:</string>
     <!-- Habit Item end -->
+
+
 </resources>

@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -50,4 +51,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+        // implementation("org.jetbrains.kotlin:kotlin-android-extensions:1.9.23")
 }
+

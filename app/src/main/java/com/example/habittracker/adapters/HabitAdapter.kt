@@ -43,7 +43,7 @@ class HabitAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
         holder.itemView.setOnClickListener {
-            clickListener.onClick(habits[position])
+            clickListener.onRVItemClicked(habits[position])
         }
     }
 
@@ -60,16 +60,11 @@ class HabitAdapter(
         }
     }
 
-    enum class HabitType(val resId  : Int) {
-        LEARN(R.string.learn),
-        HEALTH(R.string.health),
-        SPORT(R.string.sport),
-        SOCIAL(R.string.social);
-    }
+
 }
 
 interface OnRecyclerItemClicked {
-    fun onClick(habit: Habit)
+    fun onRVItemClicked(habit: Habit)
 }
 
 private val RecyclerView.ViewHolder.context

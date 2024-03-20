@@ -1,13 +1,21 @@
 package com.example.habittracker.data.models
 
-import com.example.habittracker.adapters.HabitAdapter
+import android.os.Parcelable
+import com.example.habittracker.R
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class Habit(
     var name: String,
     var description: String?,
     var priority: Int,
-    var type: HabitAdapter.HabitType,
+    var type: HabitType,
     var executionQuantity: Int,
     var frequency: Int,
     var color: Float
-)
+) : Parcelable
+
+enum class HabitType(val resId  : Int) {
+    GOOD(R.string.good_habit),
+    BAD(R.string.bad_habit);
+}

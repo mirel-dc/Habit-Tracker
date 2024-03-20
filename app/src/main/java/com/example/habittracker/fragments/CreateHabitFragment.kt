@@ -1,68 +1,97 @@
-package com.example.habittracker
+package com.example.habittracker.fragments
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Parcelable
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
-import com.example.habittracker.adapters.HabitAdapter
+import androidx.fragment.app.Fragment
+import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
-import com.example.habittracker.databinding.ActivityCreateHabitBinding
+import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.databinding.FragmentCreateHabitBinding
 import com.example.habittracker.domain.HabitList
 
-class CreateHabitActivity : AppCompatActivity() {
-    private var _binding: ActivityCreateHabitBinding? = null
+class CreateHabitFragment : Fragment() {
+    private var _binding: FragmentCreateHabitBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for ActivityCreateHabitBinding must not be null")
+            ?: throw IllegalStateException("Binding for FragmentCreateHabitBinding must not be null")
 
     private val priorities = arrayOf(1, 2, 3, 4, 5)
 
     private var hueColor = 0f
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        _binding = ActivityCreateHabitBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    private lateinit var changeHabit: Habit
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCreateHabitBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val prioritiesArrayAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, priorities)
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                priorities
+            )
         binding.spPriority.adapter = prioritiesArrayAdapter
 
+        arguments?.let {
+            changeHabit = it.parcelable<Habit>(PARAM_HABIT)!!
+        }
+
         setHabit()
-        createColorBlock()
 
         val habitName = binding.etName.text.toString() //Store value for diffUtils (name is a key)
         submitOnClickListener(habitName)
 
-        setTVColor(intent.getFloatExtra(COLOR, 0f))
+        if (isChange()) initTVColor(changeHabit.color)
+        else initTVColor(0f)
+        createColorBlock()
 
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
     }
 
+    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
+        SDK_INT >= 33 -> getParcelable(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+    }
 
     //init group
     private fun isChange(): Boolean {
-        return intent.getBooleanExtra(CHANGE, false)
+        return arguments?.getBoolean(CHANGE, false) == true
     }
 
     private fun setHabit() = with(binding) {
         if (isChange()) {
-            etName.setText(intent.getStringExtra(NAME))
-            etDescription.setText(intent.getStringExtra(DESCRIPTION))
-            setRadioGroup(intent.getStringExtra(TYPE))
-            spPriority.setSelection(intent.getIntExtra(PRIORITY, 1) - 1)
-            etExecutionQuantity.setText(
-                intent.getIntExtra(EXECUTIONQUANTITY, 1).toString()
-            )
-            etFrequency.setText(intent.getIntExtra(FREQUENCY, 1).toString())
+            etName.setText(changeHabit.name)
+            etDescription.setText(changeHabit.description)
+            setRadioGroup(getString(changeHabit.type.resId))
+            spPriority.setSelection(changeHabit.priority)
+            etExecutionQuantity.setText(changeHabit.executionQuantity.toString())
+            etFrequency.setText(changeHabit.frequency.toString())
         } else {
             containerName.helperText = getString(R.string.required)
             containerFrequency.helperText = getString(R.string.required)
@@ -72,10 +101,8 @@ class CreateHabitActivity : AppCompatActivity() {
 
     private fun setRadioGroup(typeDescription: String?) = with(binding) {
         when (typeDescription) {
-            getString(HabitAdapter.HabitType.LEARN.resId) -> rbLearn.isChecked = true
-            getString(HabitAdapter.HabitType.SPORT.resId) -> rbSport.isChecked = true
-            getString(HabitAdapter.HabitType.HEALTH.resId) -> rbHealth.isChecked = true
-            getString(HabitAdapter.HabitType.SOCIAL.resId) -> rbSocial.isChecked = true
+            getString(HabitType.GOOD.resId) -> rbGood.isChecked = true
+            getString(HabitType.BAD.resId) -> rbBad.isChecked = true
         }
     }
 
@@ -86,7 +113,7 @@ class CreateHabitActivity : AppCompatActivity() {
         val squareMargin = 50
         val squareQuantity = 16
 
-        val linearLayout = LinearLayout(this)
+        val linearLayout = LinearLayout(context)
         val linearLayoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -97,12 +124,12 @@ class CreateHabitActivity : AppCompatActivity() {
         binding.svColor.addView(linearLayout)
 
         for (i in 1..squareQuantity) {
-            val button = Button(this)
+            val button = Button(context)
             val buttonParams = LinearLayout.LayoutParams(squareSide, squareSide)
             buttonParams.setMargins(squareMargin, 15, squareMargin, 15)
             button.layoutParams = buttonParams
             button.text = "$i"
-            button.setTextColor(getColor(R.color.white))
+            context?.let { button.setTextColor(it.getColor(R.color.white)) }
             button.setBackgroundResource(R.drawable.border_color_square)
 
             button.setOnClickListener {
@@ -125,10 +152,10 @@ class CreateHabitActivity : AppCompatActivity() {
         val middlePoint: Float =
             (squareLength * i - (squareSide / 2 + squareMargin)) / (squareLength * squareQuantity) * 360
 
-        setTVColor(middlePoint)
+        initTVColor(middlePoint)
     }
 
-    private fun setTVColor(hue: Float) {
+    private fun initTVColor(hue: Float) {
         hueColor = hue
         binding.tvColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(hue, 1f, 1f)))
         val rgbColor = Color.HSVToColor(floatArrayOf(hue, 1f, 1f))
@@ -143,7 +170,7 @@ class CreateHabitActivity : AppCompatActivity() {
             )
     }
 
-    //RecyclerView on item click listener
+
     private fun submitOnClickListener(habitName: String) {
         binding.btnSubmit.setOnClickListener {
             if (submitForm()) {
@@ -152,9 +179,8 @@ class CreateHabitActivity : AppCompatActivity() {
                 } else {
                     createHabit()
                 }
-                val resultIntent = Intent()
-                setResult(Activity.RESULT_OK, resultIntent)
-                finish()
+
+                activity?.supportFragmentManager?.popBackStack()
             }
         }
     }
@@ -180,7 +206,7 @@ class CreateHabitActivity : AppCompatActivity() {
             Habit(
                 name = etName.text.toString(),
                 description = etDescription.text.toString(),
-                type = HabitAdapter.HabitType.LEARN,
+                type = HabitType.GOOD,
                 color = hueColor,
                 priority = spPriority.selectedItem.toString().toInt(),
                 executionQuantity = etExecutionQuantity.text.toString().toInt(),
@@ -190,14 +216,12 @@ class CreateHabitActivity : AppCompatActivity() {
     }
 
 
-    private fun getHabitType(): HabitAdapter.HabitType = with(binding) {
+    private fun getHabitType(): HabitType = with(binding) {
         return when (true) {
-            rbLearn.isChecked -> HabitAdapter.HabitType.LEARN
-            rbHealth.isChecked -> HabitAdapter.HabitType.HEALTH
-            rbSocial.isChecked -> HabitAdapter.HabitType.SOCIAL
-            rbSport.isChecked -> HabitAdapter.HabitType.SPORT
+            rbGood.isChecked -> HabitType.GOOD
+            rbBad.isChecked -> HabitType.BAD
             else -> {
-                HabitAdapter.HabitType.LEARN
+                HabitType.GOOD
             }
         }
     }
@@ -206,9 +230,9 @@ class CreateHabitActivity : AppCompatActivity() {
     //Validate group
     private fun submitForm(): Boolean {
         val validName = binding.etName.text?.isNotEmpty() == true
-        val validFrequency = binding.etFrequency.text?.isNotEmpty() == true
-        val validQuantity = if (binding.etExecutionQuantity.text?.isNotEmpty() == true)
-            (binding.etExecutionQuantity.text.toString().toInt() <= 7) else false
+        val validFrequency = binding.etExecutionQuantity.text?.isNotEmpty() == true
+        val validQuantity = if (binding.etFrequency.text?.isNotEmpty() == true)
+            (binding.etFrequency.text.toString().toInt() <= 7) else false
 
         return if (validName && validFrequency && validQuantity) {
             true
@@ -229,7 +253,7 @@ class CreateHabitActivity : AppCompatActivity() {
         else if (binding.etFrequency.text.toString().toInt() > 7)
             message += getString(R.string.frequencyRequired) + getString(R.string.cannot_be_more_then_7)
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(context)
             .setTitle(getString(R.string.invalid_form))
             .setMessage(message)
             .setPositiveButton(getString(R.string.okay)) { _, _ -> }.show()
@@ -284,5 +308,19 @@ class CreateHabitActivity : AppCompatActivity() {
             return getString(R.string.cannot_be_empty)
         }
         return null
+    }
+
+    companion object {
+        private const val PARAM_HABIT = "fragment_habit"
+        private const val CHANGE = "change"
+
+        fun newInstance(habit: Habit): CreateHabitFragment {
+            val fragment = CreateHabitFragment()
+            val args = Bundle()
+            args.putParcelable(PARAM_HABIT, habit)
+            args.putBoolean(CHANGE, true)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
