@@ -18,11 +18,11 @@ class HabitAdapter(
 
     private var habits = mutableListOf<Habit>()
 
-    fun setData(data: MutableList<Habit>) {
-        this.habits = data
+    fun setData(data: List<Habit>) {
+        this.habits = data.toMutableList()
     }
 
-    fun setNewData(newData: MutableList<Habit>) {
+    fun setNewData(newData: List<Habit>) {
         val diffCallback = HabitCallback(habits, newData)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         habits.clear()
@@ -59,8 +59,6 @@ class HabitAdapter(
             tvHabitPriority.text = habit.priority.toString()
         }
     }
-
-
 }
 
 interface OnRecyclerItemClicked {

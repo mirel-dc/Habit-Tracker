@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/habit_nav"
+    app:startDestination="@id/mainHolderFragment">
+    <fragment
+        android:id="@+id/createHabitFragment"
+        android:name="com.example.habittracker.fragments.CreateHabitFragment"
+        android:label="CreateHabitFragment">
+        <argument
+            android:name="habit"
+            app:argType="com.example.habittracker.data.models.Habit"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.habittracker.fragments.InfoFragment"
+        android:label="fragment_info"
+        tools:layout="@layout/fragment_info">
+        <action
+            android:id="@+id/action_infoFragment_to_mainHolderFragment"
+            app:destination="@id/mainHolderFragment"
+            app:popUpTo="@id/createHabitFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainHolderFragment"
+        android:name="com.example.habittracker.fragments.MainHolderFragment"
+        android:label="fragment_main_holder"
+        tools:layout="@layout/fragment_main_holder">
+        <action
+            android:id="@+id/action_mainHolderFragment_to_infoFragment"
+            app:destination="@id/infoFragment" />
+        <action
+            android:id="@+id/action_mainHolderFragment_to_createHabitFragment"
+            app:destination="@id/createHabitFragment" />
+    </fragment>
+</navigation>

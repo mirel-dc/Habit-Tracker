@@ -26,4 +26,5 @@
     <string name="bad_habit">Вредная</string>
     <string name="home">Домашняя страница</string>
     <string name="info">Информация</string>
+    <string name="create_new_habit">Добавить привычку</string>
 </resources>

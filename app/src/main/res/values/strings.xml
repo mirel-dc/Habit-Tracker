@@ -40,6 +40,8 @@
     <!-- Navigation Item start -->
     <string name="home">Home</string>
     <string name="info">Info</string>
+    <string name="create_new_habit">Create new Habit</string>
+
     <!-- Navigation Item end -->
 
 

@@ -15,7 +15,8 @@ data class Habit(
     var color: Float
 ) : Parcelable
 
-enum class HabitType(val resId  : Int) {
+@Parcelize
+enum class HabitType(val resId  : Int) : Parcelable {
     GOOD(R.string.good_habit),
     BAD(R.string.bad_habit);
 }

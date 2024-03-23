@@ -1,11 +1,13 @@
 package com.example.habittracker.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +15,23 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.example.habittracker.CallbackListener
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
 import com.example.habittracker.domain.HabitList
 
+private const val TAG = "CreateHabitFragment"
+
 class CreateHabitFragment : Fragment() {
+
+    private val args: CreateHabitFragmentArgs by navArgs()
+
+    private var callBack: CallbackListener? = null
+
     private var _binding: FragmentCreateHabitBinding? = null
     private val binding
         get() = _binding
@@ -31,12 +43,18 @@ class CreateHabitFragment : Fragment() {
 
     private lateinit var changeHabit: Habit
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callBack = activity as CallbackListener
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreateHabitBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -56,32 +74,33 @@ class CreateHabitFragment : Fragment() {
             )
         binding.spPriority.adapter = prioritiesArrayAdapter
 
-        arguments?.let {
-            changeHabit = it.parcelable<Habit>(PARAM_HABIT)!!
-        }
+        if (isChange()) {
+            changeHabit = args.habit!!
+            initTVColor(changeHabit.color)
+        } else initTVColor(0f)
+        createColorBlock()
 
         setHabit()
 
         val habitName = binding.etName.text.toString() //Store value for diffUtils (name is a key)
         submitOnClickListener(habitName)
 
-        if (isChange()) initTVColor(changeHabit.color)
-        else initTVColor(0f)
-        createColorBlock()
 
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
     }
 
+    //Todo  Куда выносить подобные функции?
     private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
         SDK_INT >= 33 -> getParcelable(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelable(key) as? T
     }
 
+
     //init group
     private fun isChange(): Boolean {
-        return arguments?.getBoolean(CHANGE, false) == true
+        return (args.habit != null)
     }
 
     private fun setHabit() = with(binding) {
@@ -93,6 +112,7 @@ class CreateHabitFragment : Fragment() {
             etExecutionQuantity.setText(changeHabit.executionQuantity.toString())
             etFrequency.setText(changeHabit.frequency.toString())
         } else {
+            rbGood.isChecked = true
             containerName.helperText = getString(R.string.required)
             containerFrequency.helperText = getString(R.string.required)
             containerExecutionQuantity.helperText = getString(R.string.required)
@@ -171,20 +191,6 @@ class CreateHabitFragment : Fragment() {
     }
 
 
-    private fun submitOnClickListener(habitName: String) {
-        binding.btnSubmit.setOnClickListener {
-            if (submitForm()) {
-                if (isChange()) {
-                    updateHabit(habitName)
-                } else {
-                    createHabit()
-                }
-                activity?.supportFragmentManager?.popBackStack()
-            }
-        }
-    }
-
-
     //DataList actions
     private fun updateHabit(wasHabitName: String) = with(binding) {
         HabitList.updateHabit(
@@ -205,7 +211,7 @@ class CreateHabitFragment : Fragment() {
             Habit(
                 name = etName.text.toString(),
                 description = etDescription.text.toString(),
-                type = HabitType.GOOD,
+                type = getHabitType(),
                 color = hueColor,
                 priority = spPriority.selectedItem.toString().toInt(),
                 executionQuantity = etExecutionQuantity.text.toString().toInt(),
@@ -213,7 +219,6 @@ class CreateHabitFragment : Fragment() {
             )
         )
     }
-
 
     private fun getHabitType(): HabitType = with(binding) {
         return when (true) {
@@ -227,6 +232,21 @@ class CreateHabitFragment : Fragment() {
 
 
     //Validate group
+    private fun submitOnClickListener(habitName: String) {
+        binding.btnSubmit.setOnClickListener {
+            if (submitForm()) {
+                if (isChange()) {
+                    updateHabit(habitName)
+                } else {
+                    createHabit()
+                }
+                Log.d(TAG, HabitList.getHabits().toString())
+                findNavController().popBackStack()
+                callBack?.onCallback()
+            }
+        }
+    }
+
     private fun submitForm(): Boolean {
         val validName = binding.etName.text?.isNotEmpty() == true
         val validFrequency = binding.etExecutionQuantity.text?.isNotEmpty() == true
@@ -308,18 +328,5 @@ class CreateHabitFragment : Fragment() {
         }
         return null
     }
-
-    companion object {
-        private const val PARAM_HABIT = "fragment_habit"
-        private const val CHANGE = "change"
-
-        fun newInstance(habit: Habit): CreateHabitFragment {
-            val fragment = CreateHabitFragment()
-            val args = Bundle()
-            args.putParcelable(PARAM_HABIT, habit)
-            args.putBoolean(CHANGE, true)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 }
+

@@ -1,12 +1,19 @@
 package com.example.habittracker.domain
 
 import com.example.habittracker.data.models.Habit
+import com.example.habittracker.data.models.HabitType
 
-object HabitList{
+private const val TAG = "HabitList"
+
+object HabitList {
     private var habitList = mutableListOf<Habit>()
 
-    fun getHabits(): MutableList<Habit> {
-        return habitList.map { it.copy() }.toMutableList() //Deep copy for diff Util
+    fun getHabits(): List<Habit> {
+        return habitList
+    }
+
+    fun getHabitByType(habitType: HabitType): List<Habit> {
+        return habitList.filter { it.type == habitType }.map { it.copy() }
     }
 
     fun createHabit(habit: Habit) {
