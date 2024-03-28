@@ -1,7 +1,6 @@
 package com.example.habittracker.fragments
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Build.VERSION.SDK_INT
@@ -15,38 +14,31 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.habittracker.CallbackListener
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
-import com.example.habittracker.domain.HabitList
+import com.example.habittracker.viewmodels.CreateHabitViewModel
 
 private const val TAG = "CreateHabitFragment"
 
 class CreateHabitFragment : Fragment() {
 
-    private val args: CreateHabitFragmentArgs by navArgs()
+    private val viewModel: CreateHabitViewModel by viewModels()
 
-    private var callBack: CallbackListener? = null
+    private val args: CreateHabitFragmentArgs by navArgs()
 
     private var _binding: FragmentCreateHabitBinding? = null
     private val binding
         get() = _binding
             ?: throw IllegalStateException("Binding for FragmentCreateHabitBinding must not be null")
 
-    private val priorities = arrayOf(1, 2, 3, 4, 5)
-
     private var hueColor = 0f
 
     private lateinit var changeHabit: Habit
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        callBack = activity as CallbackListener
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,14 +58,6 @@ class CreateHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val prioritiesArrayAdapter =
-            ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                priorities
-            )
-        binding.spPriority.adapter = prioritiesArrayAdapter
-
         if (isChange()) {
             changeHabit = args.habit!!
             initTVColor(changeHabit.color)
@@ -85,7 +69,7 @@ class CreateHabitFragment : Fragment() {
         val habitName = binding.etName.text.toString() //Store value for diffUtils (name is a key)
         submitOnClickListener(habitName)
 
-
+        setPriorities()
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
@@ -101,6 +85,16 @@ class CreateHabitFragment : Fragment() {
     //init group
     private fun isChange(): Boolean {
         return (args.habit != null)
+    }
+
+    private fun setPriorities() {
+        val prioritiesArrayAdapter =
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                viewModel.priorities
+            )
+        binding.spPriority.adapter = prioritiesArrayAdapter
     }
 
     private fun setHabit() = with(binding) {
@@ -190,33 +184,15 @@ class CreateHabitFragment : Fragment() {
             )
     }
 
-
-    //DataList actions
-    private fun updateHabit(wasHabitName: String) = with(binding) {
-        HabitList.updateHabit(
-            wasHabitName, Habit(
-                name = etName.text.toString(),
-                description = etDescription.text.toString(),
-                type = getHabitType(),
-                color = hueColor,
-                priority = spPriority.selectedItem.toString().toInt(),
-                executionQuantity = etExecutionQuantity.text.toString().toInt(),
-                frequency = etFrequency.text.toString().toInt()
-            )
-        )
-    }
-
-    private fun createHabit() = with(binding) {
-        HabitList.createHabit(
-            Habit(
-                name = etName.text.toString(),
-                description = etDescription.text.toString(),
-                type = getHabitType(),
-                color = hueColor,
-                priority = spPriority.selectedItem.toString().toInt(),
-                executionQuantity = etExecutionQuantity.text.toString().toInt(),
-                frequency = etFrequency.text.toString().toInt()
-            )
+    private fun getHabitFromFields(): Habit = with(binding) {
+        return Habit(
+            name = etName.text.toString(),
+            description = etDescription.text.toString(),
+            type = getHabitType(),
+            color = hueColor,
+            priority = spPriority.selectedItem.toString().toInt(),
+            executionQuantity = etExecutionQuantity.text.toString().toInt(),
+            frequency = etFrequency.text.toString().toInt()
         )
     }
 
@@ -236,13 +212,12 @@ class CreateHabitFragment : Fragment() {
         binding.btnSubmit.setOnClickListener {
             if (submitForm()) {
                 if (isChange()) {
-                    updateHabit(habitName)
+                    viewModel.updateHabit(habitName,getHabitFromFields())
                 } else {
-                    createHabit()
+                    viewModel.createHabit(getHabitFromFields())
                 }
-                Log.d(TAG, HabitList.getHabits().toString())
+                Log.d(TAG, "Confirm button clicked")
                 findNavController().popBackStack()
-                callBack?.onCallback()
             }
         }
     }

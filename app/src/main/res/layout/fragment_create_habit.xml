@@ -25,6 +25,7 @@
             android:hint="@string/habit_name"
             android:lines="1"
             android:maxLines="1"
+            android:text="@{viewModel.}"
             android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -200,3 +201,4 @@
         app:layout_constraintTop_toBottomOf="@id/svColor" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

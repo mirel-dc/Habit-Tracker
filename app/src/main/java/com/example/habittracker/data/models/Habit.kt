@@ -13,7 +13,11 @@ data class Habit(
     var executionQuantity: Int,
     var frequency: Int,
     var color: Float
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return "|${this.name} ${this.type}|"
+    }
+}
 
 @Parcelize
 enum class HabitType(val resId  : Int) : Parcelable {
