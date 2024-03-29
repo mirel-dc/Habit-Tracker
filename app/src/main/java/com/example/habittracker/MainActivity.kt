@@ -39,6 +39,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navView: NavigationView = findViewById(R.id.nav_view)
         navView.setupWithNavController(navController)
 
+        //Todo nav controller back button
+        //https://developer.android.com/guide/navigation/integrations/ui#appbarconfiguration
+        //AppBarConfiguration
+
         val toggle = ActionBarDrawerToggle(
             this,
             drawerLayout,

@@ -7,7 +7,7 @@
 
     <!-- HabitType Descriptions start -->
     <string name="good_habit">Good</string>
-    <string name="bad_habit">Good</string>
+    <string name="bad_habit">Bad</string>
     <!-- HabitType Descriptions end -->
 
     <!-- Create Habit Page start -->

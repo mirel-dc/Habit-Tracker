@@ -5,6 +5,7 @@ import com.example.habittracker.data.models.HabitType
 
 private const val TAG = "HabitList"
 
+
 object HabitList {
     private var habitList = mutableListOf<Habit>()
 
