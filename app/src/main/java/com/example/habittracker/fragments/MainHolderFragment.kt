@@ -38,7 +38,7 @@ class MainHolderFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = TypeFragmentAdapter(requireActivity())
+        adapter = TypeFragmentAdapter(this)
         viewPager = binding.habitTypeViewPager2
         viewPager.adapter = adapter
         TabLayoutMediator(

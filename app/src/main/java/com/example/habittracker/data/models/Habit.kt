@@ -3,6 +3,7 @@ package com.example.habittracker.data.models
 import android.os.Parcelable
 import com.example.habittracker.R
 import kotlinx.parcelize.Parcelize
+import java.util.UUID
 
 //TODO Add UUID
 @Parcelize
@@ -13,10 +14,11 @@ data class Habit(
     var type: HabitType,
     var executionQuantity: Int,
     var frequency: Int,
-    var color: Float
+    var color: Float,
+    val id: UUID = UUID.randomUUID(),
 ) : Parcelable {
     override fun toString(): String {
-        return "|${this.name} ${this.type}|"
+        return "|$name - $type - $id|"
     }
 }
 

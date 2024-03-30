@@ -1,8 +1,6 @@
 package com.example.habittracker.fragments
 
-import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.habittracker.CallbackListener
-import com.example.habittracker.MainActivity
 import com.example.habittracker.adapters.HabitAdapter
 import com.example.habittracker.adapters.OnRecyclerItemClicked
 import com.example.habittracker.data.models.Habit
@@ -21,15 +17,14 @@ import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentHabitsListBinding
 import com.example.habittracker.domain.HabitList
 import com.example.habittracker.utils.SpacingItemDecorator
+import com.example.habittracker.utils.parcelable
 import com.example.habittracker.viewmodels.HabitListViewModel
 
 private const val TAG = "HabitList"
 
-class HabitsListFragment : Fragment(), CallbackListener {
+class HabitsListFragment : Fragment() {
 
     private val viewModel: HabitListViewModel by viewModels()
-
-    private lateinit var call: MainActivity
 
     private var _binding: FragmentHabitsListBinding? = null
     private val binding
@@ -49,8 +44,6 @@ class HabitsListFragment : Fragment(), CallbackListener {
     ): View {
         _binding = FragmentHabitsListBinding.inflate(inflater, container, false)
 
-        call = context as MainActivity
-        call.setCallback(this)
 
         return binding.root
     }
@@ -81,23 +74,13 @@ class HabitsListFragment : Fragment(), CallbackListener {
         _adapter = context?.let {
             HabitAdapter(it, clickListener)
         }
-        //   adapter.setData()
+
+        adapter.setData(viewModel.habitsByType(habitType))
         binding.rvHabit.adapter = adapter
         binding.rvHabit.addItemDecoration(SpacingItemDecorator(16))
         binding.rvHabit.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
     }
 
-    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
-        Build.VERSION.SDK_INT >= 33 -> getParcelable(key, T::class.java)
-        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
-    }
-
-    //Callback for update RV
-    override fun onCallback() {
-//        Log.d(TAG, "OnCallback")
-//        viewModel.importHabits()
-//        Log.d(TAG, "LiveData-${viewModel.habitsLiveData.value}")
-    }
 
     //rvItemOnClick
     private val clickListener = object : OnRecyclerItemClicked {
@@ -111,8 +94,6 @@ class HabitsListFragment : Fragment(), CallbackListener {
         val navAction =
             MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habit)
         findNavController().navigate(navAction)
-
-        //adapter.setNewData(HabitList.getHabitByType(habitType))
     }
 
     companion object {
