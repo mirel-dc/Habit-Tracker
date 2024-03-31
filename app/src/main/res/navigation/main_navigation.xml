@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/createHabitFragment"
         android:name="com.example.habittracker.fragments.CreateHabitFragment"
-        android:label="CreateHabitFragment">
+        android:label="@string/create_new_habit">
         <argument
             android:name="habit"
             app:argType="com.example.habittracker.data.models.Habit"
@@ -16,7 +16,7 @@
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.example.habittracker.fragments.InfoFragment"
-        android:label="fragment_info"
+        android:label="@string/info"
         tools:layout="@layout/fragment_info">
         <action
             android:id="@+id/action_infoFragment_to_mainHolderFragment"
@@ -26,7 +26,7 @@
     <fragment
         android:id="@+id/mainHolderFragment"
         android:name="com.example.habittracker.fragments.MainHolderFragment"
-        android:label="fragment_main_holder"
+        android:label="@string/home"
         tools:layout="@layout/fragment_main_holder">
         <action
             android:id="@+id/action_mainHolderFragment_to_infoFragment"
