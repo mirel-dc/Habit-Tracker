@@ -13,6 +13,7 @@ object HabitList {
         return habitList
     }
 
+
     fun getHabitByType(habitType: HabitType): List<Habit> {
         return habitList.filter { it.type == habitType }.map { it.copy() }
     }
@@ -21,18 +22,15 @@ object HabitList {
         habitList.add(habit)
     }
 
-    fun updateHabit(
-        wasHabitName: String,
-        newHabit: Habit
-    ) {
-        habitList.find { it.name == wasHabitName }?.apply {
-            name = newHabit.name
-            description = newHabit.description
-            frequency = newHabit.frequency
-            type = newHabit.type
-            executionQuantity = newHabit.executionQuantity
-            priority = newHabit.priority
-            color = newHabit.color
+    fun updateHabit(existingHabit: Habit) {
+        habitList.find { it.id == existingHabit.id }?.apply {
+            name = existingHabit.name
+            description = existingHabit.description
+            frequency = existingHabit.frequency
+            type = existingHabit.type
+            executionQuantity = existingHabit.executionQuantity
+            priority = existingHabit.priority
+            color = existingHabit.color
         }
     }
 }

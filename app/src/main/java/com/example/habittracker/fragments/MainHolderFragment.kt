@@ -17,7 +17,7 @@ class MainHolderFragment : Fragment() {
     private var _binding: FragmentMainHolderBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentMainHolderBinding must not be null")
+            ?: throw IllegalStateException("Binding for FragmentMainHolder must not be null")
 
     private lateinit var adapter: TypeFragmentAdapter
     private lateinit var viewPager: ViewPager2

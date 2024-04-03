@@ -7,21 +7,22 @@ import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.domain.HabitList
 
+private val TAG = "VM HabitList"
+
 class HabitListViewModel : ViewModel() {
 
     private val _habitsLiveData: MutableLiveData<List<Habit>> = MutableLiveData()
-
     val habitsLiveData: LiveData<List<Habit>> = _habitsLiveData
 
     init {
         importHabits()
     }
 
-    fun importHabits() {
+    private fun importHabits() {
         _habitsLiveData.value = HabitList.getHabits()
     }
 
-    fun habitsByType(habitType: HabitType): List<Habit> {
+    fun getHabitsByType(habitType: HabitType): List<Habit> {
         return _habitsLiveData.value?.filter { it.type == habitType } ?: listOf()
     }
 
@@ -30,7 +31,8 @@ class HabitListViewModel : ViewModel() {
         HabitType.GOOD to MutableLiveData(listOf()),
         HabitType.BAD to MutableLiveData(listOf())
     )
-//
+
+
 //    fun initObserver(habitType: HabitType): MediatorLiveData<List<Habit>> {
 //        getHabits()
 //        return MediatorLiveData<List<Habit>>()

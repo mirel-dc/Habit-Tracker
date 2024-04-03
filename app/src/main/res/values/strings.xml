@@ -22,10 +22,6 @@
     <!-- Create Habit Page EditText Warnings/Errors start -->
     <string name="required">Required</string>
     <string name="invalid_form">Invalid Form</string>
-    <string name="okay" translatable="false">OK</string>
-    <string name="nameRequire">"\n\n Name: "</string>
-    <string name="frequencyRequired">"\n\n Frequency: "</string>
-    <string name="execution_quantityRequired">"\n\n Execution Quantity: "</string>
     <string name="cannot_be_empty">Cannot be Empty</string>
     <string name="cannot_be_more_then_7">Cannot be more then 7</string>
     <!-- Create Habit Page EditText Warnings/Errors end -->

@@ -1,7 +1,6 @@
 package com.example.habittracker.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,6 @@ import com.example.habittracker.adapters.OnRecyclerItemClicked
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentHabitsListBinding
-import com.example.habittracker.domain.HabitList
 import com.example.habittracker.utils.SpacingItemDecorator
 import com.example.habittracker.utils.parcelable
 import com.example.habittracker.viewmodels.HabitListViewModel
@@ -24,18 +22,18 @@ private const val TAG = "HabitList"
 
 class HabitsListFragment : Fragment() {
 
-    private val viewModel: HabitListViewModel by viewModels()
-
     private var _binding: FragmentHabitsListBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentHabitsListBinding must not be null")
+            ?: throw IllegalStateException("Binding for FragmentHabitsList must not be null")
 
     private var _adapter: HabitAdapter? = null
     private val adapter
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
 
+    private val viewModel: HabitListViewModel by viewModels()
     private lateinit var habitType: HabitType
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,8 +41,6 @@ class HabitsListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHabitsListBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
@@ -60,22 +56,19 @@ class HabitsListFragment : Fragment() {
         //Habit type for filter
         arguments?.takeIf { it.containsKey(PARAM_TYPE) }?.apply {
             habitType = parcelable(PARAM_TYPE)!!
-            Log.d(TAG, habitType.toString())
         }
-        setupRecyclerView()
+        initRecyclerView()
 
         viewModel.habitsLiveData.observe(viewLifecycleOwner) {
-            Log.d(TAG, "Trying set new data - ${viewModel.habitsByType(habitType)}")
-            adapter.setNewData(viewModel.habitsByType(habitType))
+            adapter.setNewData(viewModel.getHabitsByType(habitType))
         }
     }
 
-    private fun setupRecyclerView() {
+    private fun initRecyclerView() {
         _adapter = context?.let {
             HabitAdapter(it, clickListener)
         }
 
-        adapter.setData(viewModel.habitsByType(habitType))
         binding.rvHabit.adapter = adapter
         binding.rvHabit.addItemDecoration(SpacingItemDecorator(16))
         binding.rvHabit.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -90,7 +83,6 @@ class HabitsListFragment : Fragment() {
     }
 
     private fun doOnRVItemClicked(habit: Habit) {
-        Log.d(TAG, HabitList.getHabits().toString())
         val navAction =
             MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habit)
         findNavController().navigate(navAction)

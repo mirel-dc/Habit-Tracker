@@ -5,7 +5,6 @@ import com.example.habittracker.R
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
-//TODO Add UUID
 @Parcelize
 data class Habit(
     var name: String,

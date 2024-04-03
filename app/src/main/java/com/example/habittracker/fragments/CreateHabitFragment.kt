@@ -1,11 +1,8 @@
 package com.example.habittracker.fragments
 
-import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,24 +19,22 @@ import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
+import com.example.habittracker.domain.HabitList
 import com.example.habittracker.viewmodels.CreateHabitViewModel
 
 private const val TAG = "CreateHabitFragment"
 
 class CreateHabitFragment : Fragment() {
 
-    private val viewModel: CreateHabitViewModel by viewModels()
-
-    private val args: CreateHabitFragmentArgs by navArgs()
-
     private var _binding: FragmentCreateHabitBinding? = null
     private val binding
         get() = _binding
-            ?: throw IllegalStateException("Binding for FragmentCreateHabitBinding must not be null")
+            ?: throw IllegalStateException("Binding for FragmentCreateHabit must not be null")
 
+
+    private val viewModel: CreateHabitViewModel by viewModels()
+    private val args: CreateHabitFragmentArgs by navArgs()
     private var hueColor = 0f
-
-    private lateinit var changeHabit: Habit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,36 +54,50 @@ class CreateHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (isChange()) {
-            changeHabit = args.habit!!
-            initTVColor(changeHabit.color)
-        } else initTVColor(0f)
+        viewModel.currentHabit = args.habit
+
         createColorBlock()
+        initPriorityAdapter()
+        initCurrentHabit()
 
-        setHabit()
+        viewModel.nameError.observe(viewLifecycleOwner) { errorMessage ->
+            binding.containerName.helperText =
+                errorMessage?.let { resources.getString(it) }
+        }
 
-        val habitName = binding.etName.text.toString() //Store value for diffUtils (name is a key)
-        submitOnClickListener(habitName)
+        viewModel.quantityError.observe(viewLifecycleOwner) { errorMessage ->
+            binding.containerExecutionQuantity.helperText =
+                errorMessage?.let { resources.getString(it) }
+        }
 
-        setPriorities()
+        viewModel.frequencyError.observe(viewLifecycleOwner) { errorMessage ->
+            binding.containerFrequency.helperText =
+                errorMessage?.let { resources.getString(it) }
+        }
+        viewModel.initErrors()
+
+        submitBtnOnClickListener()
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
     }
 
-    //Todo  Куда выносить подобные функции?
-    private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelable(key, T::class.java)
-        else -> @Suppress("DEPRECATION") getParcelable(key) as? T
+
+    //init fields with RV item's data
+    private fun initCurrentHabit() = with(binding) {
+        etName.setText(viewModel.currentHabit?.name)
+        etDescription.setText(viewModel.currentHabit?.description)
+        setRadioGroup(viewModel.currentHabit?.type ?: HabitType.GOOD)
+        viewModel.currentHabit?.let { spPriority.setSelection(it.priority - 1) }
+        initTVColor(viewModel.currentHabit?.color ?: 0f)
+
+        if (viewModel.currentHabit != null) {
+            etExecutionQuantity.setText(viewModel.currentHabit?.executionQuantity.toString())
+            etFrequency.setText(viewModel.currentHabit?.frequency.toString())
+        }
     }
 
-
-    //init group
-    private fun isChange(): Boolean {
-        return (args.habit != null)
-    }
-
-    private fun setPriorities() {
+    private fun initPriorityAdapter() {
         val prioritiesArrayAdapter =
             ArrayAdapter(
                 requireContext(),
@@ -97,26 +107,97 @@ class CreateHabitFragment : Fragment() {
         binding.spPriority.adapter = prioritiesArrayAdapter
     }
 
-    private fun setHabit() = with(binding) {
-        if (isChange()) {
-            etName.setText(changeHabit.name)
-            etDescription.setText(changeHabit.description)
-            setRadioGroup(getString(changeHabit.type.resId))
-            spPriority.setSelection(changeHabit.priority - 1)
-            etExecutionQuantity.setText(changeHabit.executionQuantity.toString())
-            etFrequency.setText(changeHabit.frequency.toString())
-        } else {
-            rbGood.isChecked = true
-            containerName.helperText = getString(R.string.required)
-            containerFrequency.helperText = getString(R.string.required)
-            containerExecutionQuantity.helperText = getString(R.string.required)
+    private fun setRadioGroup(habitType: HabitType) = with(binding) {
+        when (habitType) {
+            HabitType.GOOD -> rbGood.isChecked = true
+            HabitType.BAD -> rbBad.isChecked = true
         }
     }
 
-    private fun setRadioGroup(typeDescription: String?) = with(binding) {
-        when (typeDescription) {
-            getString(HabitType.GOOD.resId) -> rbGood.isChecked = true
-            getString(HabitType.BAD.resId) -> rbBad.isChecked = true
+    private fun getHabitFromFields(): Habit = with(binding) {
+        return Habit(
+            name = etName.text.toString(),
+            description = etDescription.text.toString(),
+            type = getHabitType(),
+            color = hueColor,
+            priority = spPriority.selectedItem.toString().toInt(),
+            executionQuantity = etExecutionQuantity.text.toString().toInt(),
+            frequency = etFrequency.text.toString().toInt()
+        )
+    }
+
+    private fun getHabitType(): HabitType = with(binding) {
+        return when (true) {
+            rbGood.isChecked -> HabitType.GOOD
+            rbBad.isChecked -> HabitType.BAD
+            else -> {
+                HabitType.GOOD
+            }
+        }
+    }
+
+    //Submit
+    private fun submitBtnOnClickListener() {
+        binding.btnSubmit.setOnClickListener {
+            if (isValid()) {
+                if (viewModel.currentHabit != null) {
+                    updateCurrentHabit()
+                    viewModel.updateHabit()
+                } else {
+                    viewModel.currentHabit = getHabitFromFields()
+                    viewModel.createHabit()
+                }
+                findNavController().popBackStack()
+            }
+            Log.d(TAG, HabitList.getHabits().toString())
+        }
+    }
+
+    private fun updateCurrentHabit() = with(binding) {
+        viewModel.currentHabit?.name = etName.text.toString()
+        viewModel.currentHabit?.description = etDescription.text.toString()
+        viewModel.currentHabit?.type = getHabitType()
+        viewModel.currentHabit?.color = hueColor
+        viewModel.currentHabit?.frequency = etFrequency.text.toString().toInt()
+        viewModel.currentHabit?.executionQuantity = etExecutionQuantity.text.toString().toInt()
+        viewModel.currentHabit?.priority = spPriority.selectedItem.toString().toInt()
+    }
+
+    private fun isValid(): Boolean {
+        return if (viewModel.validateQuantity(binding.etExecutionQuantity.text.toString())
+            && viewModel.validateName(binding.etName.text.toString())
+            && viewModel.validateFrequency(binding.etFrequency.text.toString())
+        ) true
+        else {
+            Toast.makeText(requireContext(), getString(R.string.invalid_form), Toast.LENGTH_SHORT)
+                .show()
+            false
+        }
+    }
+
+
+    //EditText Helpers
+    private fun habitNameFocusListener() {
+        binding.etName.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                viewModel.validateName(binding.etName.text.toString())
+            }
+        }
+    }
+
+    private fun habitQuantityFocusListener() {
+        binding.etExecutionQuantity.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                viewModel.validateQuantity(binding.etExecutionQuantity.text.toString())
+            }
+        }
+    }
+
+    private fun habitFrequencyFocusListener() {
+        binding.etFrequency.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                viewModel.validateFrequency(binding.etFrequency.text.toString())
+            }
         }
     }
 
@@ -182,126 +263,6 @@ class CreateHabitFragment : Fragment() {
                 Color.green(rgbColor),
                 Color.blue(rgbColor)
             )
-    }
-
-    private fun getHabitFromFields(): Habit = with(binding) {
-        return Habit(
-            name = etName.text.toString(),
-            description = etDescription.text.toString(),
-            type = getHabitType(),
-            color = hueColor,
-            priority = spPriority.selectedItem.toString().toInt(),
-            executionQuantity = etExecutionQuantity.text.toString().toInt(),
-            frequency = etFrequency.text.toString().toInt()
-        )
-    }
-
-    private fun getHabitType(): HabitType = with(binding) {
-        return when (true) {
-            rbGood.isChecked -> HabitType.GOOD
-            rbBad.isChecked -> HabitType.BAD
-            else -> {
-                HabitType.GOOD
-            }
-        }
-    }
-
-
-    //Validate group
-    private fun submitOnClickListener(habitName: String) {
-        binding.btnSubmit.setOnClickListener {
-            if (submitForm()) {
-                if (isChange()) {
-                    viewModel.updateHabit(habitName,getHabitFromFields())
-                } else {
-                    viewModel.createHabit(getHabitFromFields())
-                }
-                Log.d(TAG, "Confirm button clicked")
-                findNavController().popBackStack()
-            }
-        }
-    }
-
-    private fun submitForm(): Boolean {
-        val validName = binding.etName.text?.isNotEmpty() == true
-        val validFrequency = binding.etExecutionQuantity.text?.isNotEmpty() == true
-        val validQuantity = if (binding.etFrequency.text?.isNotEmpty() == true)
-            (binding.etFrequency.text.toString().toInt() <= 7) else false
-
-        return if (validName && validFrequency && validQuantity) {
-            true
-        } else {
-            invalidForm()
-            false
-        }
-    }
-
-    private fun invalidForm() {
-        var message = ""
-        if (binding.etName.text?.isNotEmpty() == false)
-            message += getString(R.string.nameRequire) + getString(R.string.cannot_be_empty)
-        if (binding.etExecutionQuantity.text?.isNotEmpty() == false)
-            message += getString(R.string.execution_quantityRequired) + getString(R.string.cannot_be_empty)
-        if (binding.etFrequency.text?.isNotEmpty() == false)
-            message += getString(R.string.frequencyRequired) + getString(R.string.cannot_be_empty)
-        else if (binding.etFrequency.text.toString().toInt() > 7)
-            message += getString(R.string.frequencyRequired) + getString(R.string.cannot_be_more_then_7)
-
-        AlertDialog.Builder(context)
-            .setTitle(getString(R.string.invalid_form))
-            .setMessage(message)
-            .setPositiveButton(getString(R.string.okay)) { _, _ -> }.show()
-    }
-
-    private fun habitFrequencyFocusListener() {
-        binding.etFrequency.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                binding.containerFrequency.helperText = validFrequency()
-            }
-        }
-    }
-
-    private fun validFrequency(): String? {
-        val frequency = binding.etFrequency.text.toString()
-        if (frequency.isEmpty()) {
-            return getString(R.string.cannot_be_empty)
-        }
-        if (frequency.toInt() > 7) {
-            return getString(R.string.cannot_be_more_then_7)
-        }
-        return null
-    }
-
-    private fun habitQuantityFocusListener() {
-        binding.etExecutionQuantity.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                binding.containerExecutionQuantity.helperText = validQuantity()
-            }
-        }
-    }
-
-    private fun validQuantity(): String? {
-        val quantity = binding.etExecutionQuantity.text.toString()
-        if (quantity.isEmpty()) {
-            return getString(R.string.cannot_be_empty)
-        }
-        return null
-    }
-
-    private fun habitNameFocusListener() {
-        binding.etName.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                binding.containerName.helperText = validName()
-            }
-        }
-    }
-
-    private fun validName(): String? {
-        val nameText = binding.etName.text.toString()
-        if (nameText.isEmpty()) {
-            return getString(R.string.cannot_be_empty)
-        }
-        return null
     }
 }
 
