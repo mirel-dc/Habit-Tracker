@@ -25,7 +25,7 @@ class CreateHabitViewModel : ViewModel() {
     private val _quantityError = MutableLiveData<Int?>()
     val quantityError: LiveData<Int?> = _quantityError
 
-    fun initErrors() {
+    fun initValidationErrors() {
         if (currentHabit == null) {
             _nameError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty

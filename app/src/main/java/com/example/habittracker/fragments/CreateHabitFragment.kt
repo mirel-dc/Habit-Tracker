@@ -42,7 +42,6 @@ class CreateHabitFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreateHabitBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -74,7 +73,7 @@ class CreateHabitFragment : Fragment() {
             binding.containerFrequency.helperText =
                 errorMessage?.let { resources.getString(it) }
         }
-        viewModel.initErrors()
+        viewModel.initValidationErrors()
 
         submitBtnOnClickListener()
         habitNameFocusListener()
@@ -136,7 +135,7 @@ class CreateHabitFragment : Fragment() {
         }
     }
 
-    //Submit
+    //Submitting Habit group
     private fun submitBtnOnClickListener() {
         binding.btnSubmit.setOnClickListener {
             if (isValid()) {
@@ -213,8 +212,11 @@ class CreateHabitFragment : Fragment() {
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        linearLayout.layoutParams = linearLayoutParams
-        linearLayout.orientation = LinearLayout.HORIZONTAL
+
+        linearLayout.apply {
+            layoutParams = linearLayoutParams
+            orientation = LinearLayout.HORIZONTAL
+        }
 
         binding.svColor.addView(linearLayout)
 
@@ -222,14 +224,13 @@ class CreateHabitFragment : Fragment() {
             val button = Button(context)
             val buttonParams = LinearLayout.LayoutParams(squareSide, squareSide)
             buttonParams.setMargins(squareMargin, 15, squareMargin, 15)
-            button.layoutParams = buttonParams
-            button.text = "$i"
-            context?.let { button.setTextColor(it.getColor(R.color.white)) }
-            button.setBackgroundResource(R.drawable.border_color_square)
-
-            button.setOnClickListener {
-                setColor(squareSide, squareMargin, squareQuantity, i)
+            button.apply {
+                layoutParams = buttonParams
+                text = "$i"
+                setBackgroundResource(R.drawable.border_color_square)
+                setOnClickListener { setColor(squareSide, squareMargin, squareQuantity, i) }
             }
+            context?.let { button.setTextColor(it.getColor(R.color.white)) }
             linearLayout.addView(button)
         }
 
@@ -243,7 +244,6 @@ class CreateHabitFragment : Fragment() {
 
     private fun setColor(squareSide: Int, squareMargin: Int, squareQuantity: Int, i: Int) {
         val squareLength: Float = 2f * squareMargin + squareSide
-
         val middlePoint: Float =
             (squareLength * i - (squareSide / 2 + squareMargin)) / (squareLength * squareQuantity) * 360
 
@@ -254,7 +254,6 @@ class CreateHabitFragment : Fragment() {
         hueColor = hue
         binding.tvColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(hue, 1f, 1f)))
         val rgbColor = Color.HSVToColor(floatArrayOf(hue, 1f, 1f))
-
         binding.tvColor.text =
             getString(
                 R.string.current_color_hsv_rgb,

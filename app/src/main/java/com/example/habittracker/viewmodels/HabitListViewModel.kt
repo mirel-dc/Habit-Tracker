@@ -14,8 +14,28 @@ class HabitListViewModel : ViewModel() {
     private val _habitsLiveData: MutableLiveData<List<Habit>> = MutableLiveData()
     val habitsLiveData: LiveData<List<Habit>> = _habitsLiveData
 
+    private val _filterByLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val filterByLiveData: LiveData<Boolean> = _filterByLiveData
+
+    private val _searchNameLiveData: MutableLiveData<String> = MutableLiveData()
+    val searchNameLiveData: LiveData<String> = _searchNameLiveData
+
     init {
         importHabits()
+        _filterByLiveData.value = true
+        _searchNameLiveData.value = ""
+    }
+
+    fun filterByAsc() {
+        _filterByLiveData.value = true
+    }
+
+    fun filterByDesc() {
+        _filterByLiveData.value = false
+    }
+
+    fun setSearchingName(name: String) {
+        _searchNameLiveData.value = name
     }
 
     private fun importHabits() {
@@ -23,26 +43,13 @@ class HabitListViewModel : ViewModel() {
     }
 
     fun getHabitsByType(habitType: HabitType): List<Habit> {
-        return _habitsLiveData.value?.filter { it.type == habitType } ?: listOf()
+        val list = _habitsLiveData.value?.filter { it.type == habitType } ?: listOf()
+        val searchString = searchNameLiveData.value.toString().trim()
+
+        return if (_filterByLiveData.value == true) {
+            list.sortedBy { it.editDate }.filter { it.name.contains(searchString) }
+        } else {
+            list.sortedByDescending { it.editDate }.filter { it.name.contains(searchString) }
+        }
     }
-
-
-    val habitsByType = mutableMapOf<HabitType, MutableLiveData<List<Habit>>>(
-        HabitType.GOOD to MutableLiveData(listOf()),
-        HabitType.BAD to MutableLiveData(listOf())
-    )
-
-
-//    fun initObserver(habitType: HabitType): MediatorLiveData<List<Habit>> {
-//        getHabits()
-//        return MediatorLiveData<List<Habit>>()
-//    }
-
-//    private fun getHabits(newHabits: List<Habit>?, habitType: HabitType):List<Habit>{
-//        val filtered = newHabits?.filter { it.type == habitType }
-//
-//        return filtered?.sortedWith(comparator) ?: listOf()
-//    }
-
-
 }

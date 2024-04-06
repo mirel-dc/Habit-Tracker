@@ -10,9 +10,6 @@
     <string name="choose_priority">Выберите Приоритет:</string>
     <string name="required">Необходимо заполнить</string>
     <string name="invalid_form">Неправильная форма</string>
-    <string name="nameRequire">"\n\n Название привычки: "</string>
-    <string name="frequencyRequired">"\n\n Частота привычки: "</string>
-    <string name="execution_quantityRequired">"\n\n Количество выполнений: "</string>
     <string name="cannot_be_empty">Не может быть Пустым</string>
     <string name="cannot_be_more_then_7">Не может быть больше 7</string>
     <string name="current_color_hsv_rgb">Текущий цвет: HSV(%1$.2f,1,1); RGB(%2$d,%3$d,%4$d)</string>
@@ -26,4 +23,8 @@
     <string name="home">Домашняя страница</string>
     <string name="info">Информация</string>
     <string name="create_new_habit">Добавить привычку</string>
+    <string name="filter_and_search">Фильтр и поиск</string>
+    <string name="sort_by_date_edited">Сортировать по дате редактирования</string>
+    <string name="filter_ascending">Фильтровать по возрастанию</string>
+    <string name="filter_descending">Фильтровать по убыванию</string>
 </resources>

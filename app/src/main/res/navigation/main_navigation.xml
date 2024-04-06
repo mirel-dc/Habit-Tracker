@@ -35,4 +35,5 @@
             android:id="@+id/action_mainHolderFragment_to_createHabitFragment"
             app:destination="@id/createHabitFragment" />
     </fragment>
+
 </navigation>

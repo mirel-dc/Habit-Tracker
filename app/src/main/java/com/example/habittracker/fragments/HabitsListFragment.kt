@@ -1,11 +1,12 @@
 package com.example.habittracker.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,7 @@ class HabitsListFragment : Fragment() {
     private val adapter
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
 
-    private val viewModel: HabitListViewModel by viewModels()
+    private val viewModel: HabitListViewModel by activityViewModels()
     private lateinit var habitType: HabitType
 
 
@@ -60,6 +61,15 @@ class HabitsListFragment : Fragment() {
         initRecyclerView()
 
         viewModel.habitsLiveData.observe(viewLifecycleOwner) {
+            adapter.setNewData(viewModel.getHabitsByType(habitType))
+        }
+
+        viewModel.filterByLiveData.observe(requireActivity()) {
+            adapter.setNewData(viewModel.getHabitsByType(habitType))
+        }
+
+        viewModel.searchNameLiveData.observe(requireActivity()) {
+            Log.d(TAG,"searching $it")
             adapter.setNewData(viewModel.getHabitsByType(habitType))
         }
     }

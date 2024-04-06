@@ -51,6 +51,10 @@ class MainHolderFragment : Fragment() {
             }
         }.attach()
 
+        val bottomSheetFilter = BottomSheetFilterFragment()
+        childFragmentManager.beginTransaction()
+            .replace(binding.containerBS.id, bottomSheetFilter)
+            .commit()
 
         binding.fabCreateHabit.setOnClickListener {
             val navAction = MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(null)

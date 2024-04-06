@@ -36,6 +36,10 @@
     <string name="home">Home</string>
     <string name="info">Info</string>
     <string name="create_new_habit">Create new Habit</string>
+    <string name="filter_and_search">Filter and search</string>
+    <string name="sort_by_date_edited">Sort by date edited</string>
+    <string name="filter_ascending">Filter ascending</string>
+    <string name="filter_descending">Filter descending</string>
     <!-- Navigation Item end -->
 
 

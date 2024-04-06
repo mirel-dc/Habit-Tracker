@@ -3,6 +3,7 @@ package com.example.habittracker.data.models
 import android.os.Parcelable
 import com.example.habittracker.R
 import kotlinx.parcelize.Parcelize
+import java.util.Calendar
 import java.util.UUID
 
 @Parcelize
@@ -15,6 +16,7 @@ data class Habit(
     var frequency: Int,
     var color: Float,
     val id: UUID = UUID.randomUUID(),
+    val editDate: Long = Calendar.getInstance().timeInMillis
 ) : Parcelable {
     override fun toString(): String {
         return "|$name - $type - $id|"
@@ -22,7 +24,7 @@ data class Habit(
 }
 
 @Parcelize
-enum class HabitType(val resId  : Int) : Parcelable {
+enum class HabitType(val resId: Int) : Parcelable {
     GOOD(R.string.good_habit),
     BAD(R.string.bad_habit);
 }
