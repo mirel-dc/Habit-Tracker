@@ -23,7 +23,7 @@
     </LinearLayout>
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/containerBS"
+        android:id="@+id/containerBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
@@ -36,7 +36,7 @@
         android:backgroundTint="@color/buttonColor"
         android:contentDescription="@string/create_new_habit"
         android:src="@drawable/ic_plus_24"
-        app:layout_anchor="@+id/containerBS"
+        app:layout_anchor="@+id/containerBottomSheet"
         app:layout_anchorGravity="top|end"
         app:tint="@android:color/white" />
 

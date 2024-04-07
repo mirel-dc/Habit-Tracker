@@ -40,10 +40,11 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.root.parent as View)
-        bottomSheetBehavior.peekHeight = 200
-        bottomSheetBehavior.isHideable = false
-        bottomSheetBehavior.isDraggable = true
-
+        bottomSheetBehavior.apply {
+            peekHeight = 200
+            isDraggable = true
+            isHideable = false
+        }
 
         binding.ibFilterAsc.setOnClickListener {
             Log.d(TAG, "ibFilterAsc clicked")

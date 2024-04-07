@@ -51,9 +51,10 @@ class MainHolderFragment : Fragment() {
             }
         }.attach()
 
+        //Replacing container to save the anchor settings of the fab
         val bottomSheetFilter = BottomSheetFilterFragment()
         childFragmentManager.beginTransaction()
-            .replace(binding.containerBS.id, bottomSheetFilter)
+            .replace(binding.containerBottomSheet.id, bottomSheetFilter)
             .commit()
 
         binding.fabCreateHabit.setOnClickListener {

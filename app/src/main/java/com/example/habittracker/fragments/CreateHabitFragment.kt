@@ -53,6 +53,7 @@ class CreateHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Set chosen RV item's data into View Model
         viewModel.currentHabit = args.habit
 
         createColorBlock()
@@ -113,17 +114,6 @@ class CreateHabitFragment : Fragment() {
         }
     }
 
-    private fun getHabitFromFields(): Habit = with(binding) {
-        return Habit(
-            name = etName.text.toString(),
-            description = etDescription.text.toString(),
-            type = getHabitType(),
-            color = hueColor,
-            priority = spPriority.selectedItem.toString().toInt(),
-            executionQuantity = etExecutionQuantity.text.toString().toInt(),
-            frequency = etFrequency.text.toString().toInt()
-        )
-    }
 
     private fun getHabitType(): HabitType = with(binding) {
         return when (true) {
@@ -152,6 +142,7 @@ class CreateHabitFragment : Fragment() {
         }
     }
 
+    //Update ViewModel's habit with data from fields
     private fun updateCurrentHabit() = with(binding) {
         viewModel.currentHabit?.name = etName.text.toString()
         viewModel.currentHabit?.description = etDescription.text.toString()
@@ -160,6 +151,19 @@ class CreateHabitFragment : Fragment() {
         viewModel.currentHabit?.frequency = etFrequency.text.toString().toInt()
         viewModel.currentHabit?.executionQuantity = etExecutionQuantity.text.toString().toInt()
         viewModel.currentHabit?.priority = spPriority.selectedItem.toString().toInt()
+    }
+
+    //Geting new Habit from fields to set ViewModel's habit
+    private fun getHabitFromFields(): Habit = with(binding) {
+        return Habit(
+            name = etName.text.toString(),
+            description = etDescription.text.toString(),
+            type = getHabitType(),
+            color = hueColor,
+            priority = spPriority.selectedItem.toString().toInt(),
+            executionQuantity = etExecutionQuantity.text.toString().toInt(),
+            frequency = etFrequency.text.toString().toInt()
+        )
     }
 
     private fun isValid(): Boolean {

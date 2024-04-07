@@ -54,7 +54,7 @@ class HabitsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //Habit type for filter
+        //Habit type for viewPager
         arguments?.takeIf { it.containsKey(PARAM_TYPE) }?.apply {
             habitType = parcelable(PARAM_TYPE)!!
         }
