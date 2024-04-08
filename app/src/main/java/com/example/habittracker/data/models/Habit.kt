@@ -8,8 +8,7 @@ import kotlinx.parcelize.Parcelize
 import java.util.Calendar
 import java.util.UUID
 
-@Parcelize
-@Entity (tableName = "habits")
+@Entity(tableName = "habits")
 data class Habit(
     @PrimaryKey
     val id: UUID = UUID.randomUUID(),
@@ -21,7 +20,7 @@ data class Habit(
     var executionQuantity: Int,
     var frequency: Int,
     var color: Float,
-) : Parcelable {
+) {
     override fun toString(): String {
         return "|$name - $type - $id|"
     }
