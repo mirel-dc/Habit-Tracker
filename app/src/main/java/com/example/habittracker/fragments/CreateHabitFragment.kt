@@ -54,7 +54,7 @@ class CreateHabitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Set chosen RV item's data into View Model
-        viewModel.currentHabit = args.habit
+        if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID)
 
         createColorBlock()
         initPriorityAdapter()

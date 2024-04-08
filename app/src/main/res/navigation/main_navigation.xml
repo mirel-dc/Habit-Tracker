@@ -9,8 +9,8 @@
         android:name="com.example.habittracker.fragments.CreateHabitFragment"
         android:label="@string/create_new_habit">
         <argument
-            android:name="habit"
-            app:argType="com.example.habittracker.data.models.Habit"
+            android:name="habitUUID"
+            app:argType="string"
             app:nullable="true" />
     </fragment>
     <fragment

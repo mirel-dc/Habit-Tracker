@@ -6,7 +6,6 @@ import kotlinx.parcelize.Parcelize
 import java.util.Calendar
 import java.util.UUID
 
-@Parcelize
 data class Habit(
     var name: String,
     var description: String?,
@@ -17,7 +16,7 @@ data class Habit(
     var color: Float,
     val id: UUID = UUID.randomUUID(),
     val editDate: Long = Calendar.getInstance().timeInMillis
-) : Parcelable {
+) {
     override fun toString(): String {
         return "|$name - $type - $id|"
     }

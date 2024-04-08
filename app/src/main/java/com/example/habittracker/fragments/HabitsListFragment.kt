@@ -69,7 +69,7 @@ class HabitsListFragment : Fragment() {
         }
 
         viewModel.searchNameLiveData.observe(requireActivity()) {
-            Log.d(TAG,"searching $it")
+            Log.d(TAG, "searching $it")
             adapter.setNewData(viewModel.getHabitsByType(habitType))
         }
     }
@@ -94,7 +94,7 @@ class HabitsListFragment : Fragment() {
 
     private fun doOnRVItemClicked(habit: Habit) {
         val navAction =
-            MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habit)
+            MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habit.id.toString())
         findNavController().navigate(navAction)
     }
 
