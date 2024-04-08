@@ -2,6 +2,7 @@ package com.example.habittracker.domain
 
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
+import java.util.UUID
 
 private const val TAG = "HabitList"
 
@@ -32,5 +33,9 @@ object HabitList {
             priority = existingHabit.priority
             color = existingHabit.color
         }
+    }
+
+    fun getHabitByUUID(habitUUID: UUID?): Habit? {
+        return habitList.find { it.id == habitUUID }
     }
 }

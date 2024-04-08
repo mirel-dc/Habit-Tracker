@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.domain.HabitList
+import java.util.UUID
 
 private const val TAG = "CreateHabitViewModel"
 
@@ -86,5 +87,9 @@ class CreateHabitViewModel : ViewModel() {
     fun updateHabit() {
         HabitList.updateHabit(currentHabit!!)
         Log.d(TAG + "Update Habit", HabitList.getHabits().toString())
+    }
+
+    fun setCurrentHabitWithUUID(habitUUID: String?) {
+        currentHabit = HabitList.getHabitByUUID(UUID.fromString(habitUUID))
     }
 }
