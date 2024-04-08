@@ -7,7 +7,7 @@ import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.domain.HabitList
 
-private val TAG = "VM HabitList"
+private const val TAG = "VM HabitList"
 
 class HabitListViewModel : ViewModel() {
 
@@ -47,9 +47,11 @@ class HabitListViewModel : ViewModel() {
         val searchString = searchNameLiveData.value.toString().trim()
 
         return if (_filterByLiveData.value == true) {
-            list.sortedBy { it.editDate }.filter { it.name.contains(searchString) }
+            list.sortedBy { it.editDate }
+                .filter { it.name.lowercase().contains(searchString.lowercase()) }
         } else {
-            list.sortedByDescending { it.editDate }.filter { it.name.contains(searchString) }
+            list.sortedByDescending { it.editDate }
+                .filter { it.name.lowercase().contains(searchString.lowercase()) }
         }
     }
 }
