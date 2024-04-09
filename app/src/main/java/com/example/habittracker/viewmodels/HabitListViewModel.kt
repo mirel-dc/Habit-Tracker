@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.db.HabitRepository
 import com.example.habittracker.domain.HabitList
 
 private const val TAG = "VM HabitList"
 
-class HabitListViewModel : ViewModel() {
+class HabitListViewModel(
+    private val habitRepository: HabitRepository
+) : ViewModel() {
 
     private val _habitsLiveData: MutableLiveData<List<Habit>> = MutableLiveData()
     val habitsLiveData: LiveData<List<Habit>> = _habitsLiveData
@@ -39,6 +42,7 @@ class HabitListViewModel : ViewModel() {
     }
 
     private fun importHabits() {
+        habitRepository.getAllHabits()
         _habitsLiveData.value = HabitList.getHabits()
     }
 
@@ -54,4 +58,5 @@ class HabitListViewModel : ViewModel() {
                 .filter { it.name.lowercase().contains(searchString.lowercase()) }
         }
     }
+
 }

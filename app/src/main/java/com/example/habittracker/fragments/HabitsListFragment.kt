@@ -15,9 +15,12 @@ import com.example.habittracker.adapters.OnRecyclerItemClicked
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentHabitsListBinding
+import com.example.habittracker.db.HabitDB
+import com.example.habittracker.db.HabitRepository
 import com.example.habittracker.utils.SpacingItemDecorator
 import com.example.habittracker.utils.parcelable
 import com.example.habittracker.viewmodels.HabitListViewModel
+import com.example.habittracker.viewmodels.HabitListViewModelFactory
 
 private const val TAG = "HabitList"
 
@@ -32,7 +35,9 @@ class HabitsListFragment : Fragment() {
     private val adapter
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
 
-    private val viewModel: HabitListViewModel by activityViewModels()
+    private val viewModel: HabitListViewModel by activityViewModels {
+        HabitListViewModelFactory(HabitRepository(HabitDB.getHabitDB(requireContext())))
+    }
     private lateinit var habitType: HabitType
 
 
@@ -110,3 +115,4 @@ class HabitsListFragment : Fragment() {
         }
     }
 }
+

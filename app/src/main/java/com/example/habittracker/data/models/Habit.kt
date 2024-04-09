@@ -30,4 +30,13 @@ data class Habit(
 enum class HabitType(val resId: Int) : Parcelable {
     GOOD(R.string.good_habit),
     BAD(R.string.bad_habit);
+
+    companion object {
+        fun getByResId(resId: Int): HabitType {
+            return when (resId) {
+                GOOD.resId -> GOOD
+                else -> BAD
+            }
+        }
+    }
 }

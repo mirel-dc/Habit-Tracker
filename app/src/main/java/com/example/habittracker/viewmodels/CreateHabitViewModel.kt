@@ -12,7 +12,9 @@ import java.util.UUID
 
 private const val TAG = "CreateHabitViewModel"
 
-class CreateHabitViewModel : ViewModel() {
+class CreateHabitViewModel(
+  //  private val habitRepository: HabitRepository
+) : ViewModel() {
 
     var currentHabit: Habit? = null
     val priorities = arrayOf(1, 2, 3, 4, 5)
@@ -68,6 +70,7 @@ class CreateHabitViewModel : ViewModel() {
     }
 
     fun createHabit() {
+     //  currentHabit?.let { habitRepository.insertHabit(it) }
         currentHabit?.let {
             HabitList.createHabit(
                 Habit(
@@ -83,8 +86,9 @@ class CreateHabitViewModel : ViewModel() {
         }
     }
 
-    //wasHabitName could be changed with UID
     fun updateHabit() {
+        //TODO
+       // currentHabit?.let { dao.update(it) }
         HabitList.updateHabit(currentHabit!!)
         Log.d(TAG + "Update Habit", HabitList.getHabits().toString())
     }
