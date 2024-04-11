@@ -15,7 +15,9 @@ private const val TAG = "CreateHabitViewModel"
 class CreateHabitViewModel : ViewModel() {
 
     var currentHabit: Habit? = null
-    val priorities = arrayOf(1, 2, 3, 4, 5)
+        private set
+    var priorities = arrayOf(1, 2, 3, 4, 5)
+        private set
 
     private val _nameError = MutableLiveData<Int?>()
     val nameError: LiveData<Int?> = _nameError
@@ -91,5 +93,9 @@ class CreateHabitViewModel : ViewModel() {
 
     fun setCurrentHabitWithUUID(habitUUID: String?) {
         currentHabit = HabitList.getHabitByUUID(UUID.fromString(habitUUID))
+    }
+
+    fun setCurrentHabitWithObject(habit: Habit){
+        currentHabit = habit
     }
 }

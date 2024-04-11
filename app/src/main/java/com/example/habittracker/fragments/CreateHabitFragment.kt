@@ -133,7 +133,7 @@ class CreateHabitFragment : Fragment() {
                     updateCurrentHabit()
                     viewModel.updateHabit()
                 } else {
-                    viewModel.currentHabit = getHabitFromFields()
+                    viewModel.setCurrentHabitWithObject(getHabitFromFields())
                     viewModel.createHabit()
                 }
                 findNavController().popBackStack()
