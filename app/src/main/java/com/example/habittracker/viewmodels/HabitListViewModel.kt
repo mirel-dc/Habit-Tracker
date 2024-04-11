@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
-import com.example.habittracker.db.HabitRepository
-import com.example.habittracker.domain.HabitList
+import com.example.habittracker.repository.HabitRepository
 
 private const val TAG = "VM HabitList"
 
@@ -14,8 +13,9 @@ class HabitListViewModel(
     private val habitRepository: HabitRepository
 ) : ViewModel() {
 
-    private val _habitsLiveData: MutableLiveData<List<Habit>> = MutableLiveData()
-    val habitsLiveData: LiveData<List<Habit>> = _habitsLiveData
+    var habitsLiveData: LiveData<List<Habit>> = habitRepository.getAllHabits()
+
+    private var currentList: List<Habit> = listOf()
 
     private val _filterByLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val filterByLiveData: LiveData<Boolean> = _filterByLiveData
@@ -24,9 +24,12 @@ class HabitListViewModel(
     val searchNameLiveData: LiveData<String> = _searchNameLiveData
 
     init {
-        importHabits()
         _filterByLiveData.value = true
         _searchNameLiveData.value = ""
+    }
+
+    fun updateLiveData() {
+        habitsLiveData = habitRepository.getAllHabits()
     }
 
     fun filterByAsc() {
@@ -41,13 +44,13 @@ class HabitListViewModel(
         _searchNameLiveData.value = name
     }
 
-    private fun importHabits() {
-        habitRepository.getAllHabits()
-        _habitsLiveData.value = HabitList.getHabits()
+    fun setCurrentList(newList: List<Habit>) {
+        currentList = newList
     }
 
+
     fun getHabitsByType(habitType: HabitType): List<Habit> {
-        val list = _habitsLiveData.value?.filter { it.type == habitType } ?: listOf()
+        val list = currentList.filter { it.type == habitType }
         val searchString = searchNameLiveData.value.toString().trim()
 
         return if (_filterByLiveData.value == true) {
@@ -58,5 +61,4 @@ class HabitListViewModel(
                 .filter { it.name.lowercase().contains(searchString.lowercase()) }
         }
     }
-
 }

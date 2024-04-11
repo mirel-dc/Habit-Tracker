@@ -9,7 +9,7 @@
     android:backgroundTint="@color/material_dynamic_neutral100"
     android:orientation="vertical"
     app:behavior_hideable="false"
-    app:behavior_peekHeight="60dp"
+    app:behavior_peekHeight="@dimen/BottomSheetPeekValue"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <TextView

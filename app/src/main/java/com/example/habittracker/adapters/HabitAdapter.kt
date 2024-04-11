@@ -18,12 +18,8 @@ class HabitAdapter(
 
     private var habits = mutableListOf<Habit>()
 
-    fun setData(data: List<Habit>) {
-        this.habits = data.toMutableList()
-    }
-
     fun setNewData(newData: List<Habit>) {
-        val diffCallback = HabitCallback(habits, newData)
+        val diffCallback = HabitDiffCallback(habits, newData)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         habits.clear()
         habits.addAll(newData)

@@ -3,7 +3,6 @@ package com.example.habittracker.fragments
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,14 +11,17 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
-import com.example.habittracker.domain.HabitList
+import com.example.habittracker.db.HabitDB
+import com.example.habittracker.repository.HabitRepository
 import com.example.habittracker.viewmodels.CreateHabitViewModel
 
 private const val TAG = "CreateHabitFragment"
@@ -32,7 +34,14 @@ class CreateHabitFragment : Fragment() {
             ?: throw IllegalStateException("Binding for FragmentCreateHabit must not be null")
 
 
-    private val viewModel: CreateHabitViewModel by viewModels()
+    private val viewModel: CreateHabitViewModel by activityViewModels {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return CreateHabitViewModel(HabitRepository(HabitDB.getHabitDB(requireContext()))) as T
+            }
+        }
+    }
     private val args: CreateHabitFragmentArgs by navArgs()
     private var hueColor = 0f
 
@@ -55,10 +64,12 @@ class CreateHabitFragment : Fragment() {
 
         //Set chosen RV item's data into View Model
         if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID)
+        else viewModel.clearCurrentHabit()
 
         createColorBlock()
         initPriorityAdapter()
         initCurrentHabit()
+        viewModel.initValidationErrors()
 
         viewModel.nameError.observe(viewLifecycleOwner) { errorMessage ->
             binding.containerName.helperText =
@@ -74,7 +85,6 @@ class CreateHabitFragment : Fragment() {
             binding.containerFrequency.helperText =
                 errorMessage?.let { resources.getString(it) }
         }
-        viewModel.initValidationErrors()
 
         submitBtnOnClickListener()
         habitNameFocusListener()
@@ -133,12 +143,11 @@ class CreateHabitFragment : Fragment() {
                     updateCurrentHabit()
                     viewModel.updateHabit()
                 } else {
-                    viewModel.currentHabit = getHabitFromFields()
+                    viewModel.setCurrentHabitWithObject(getHabitFromFields())
                     viewModel.createHabit()
                 }
                 findNavController().popBackStack()
             }
-            Log.d(TAG, HabitList.getHabits().toString())
         }
     }
 

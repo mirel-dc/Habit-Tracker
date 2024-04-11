@@ -1,23 +1,24 @@
 package com.example.habittracker.viewmodels
 
 import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
-import com.example.habittracker.domain.HabitList
+import com.example.habittracker.repository.HabitRepository
 import java.util.UUID
 
 private const val TAG = "CreateHabitViewModel"
 
 class CreateHabitViewModel(
-  //  private val habitRepository: HabitRepository
+    private val habitRepository: HabitRepository
 ) : ViewModel() {
 
     var currentHabit: Habit? = null
-    val priorities = arrayOf(1, 2, 3, 4, 5)
+        private set
+    var priorities = arrayOf(1, 2, 3, 4, 5)
+        private set
 
     private val _nameError = MutableLiveData<Int?>()
     val nameError: LiveData<Int?> = _nameError
@@ -28,11 +29,19 @@ class CreateHabitViewModel(
     private val _quantityError = MutableLiveData<Int?>()
     val quantityError: LiveData<Int?> = _quantityError
 
+    fun clearCurrentHabit() {
+        currentHabit = null
+    }
+
     fun initValidationErrors() {
         if (currentHabit == null) {
             _nameError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty
             _frequencyError.value = R.string.cannot_be_empty
+        }else{
+            _nameError.value = null
+            _quantityError.value = null
+            _frequencyError.value = null
         }
     }
 
@@ -70,9 +79,8 @@ class CreateHabitViewModel(
     }
 
     fun createHabit() {
-     //  currentHabit?.let { habitRepository.insertHabit(it) }
         currentHabit?.let {
-            HabitList.createHabit(
+            habitRepository.insertHabit(
                 Habit(
                     name = it.name,
                     description = it.description,
@@ -87,13 +95,14 @@ class CreateHabitViewModel(
     }
 
     fun updateHabit() {
-        //TODO
-       // currentHabit?.let { dao.update(it) }
-        HabitList.updateHabit(currentHabit!!)
-        Log.d(TAG + "Update Habit", HabitList.getHabits().toString())
+        currentHabit?.let { habitRepository.updateHabit(it) }
     }
 
     fun setCurrentHabitWithUUID(habitUUID: String?) {
-        currentHabit = HabitList.getHabitByUUID(UUID.fromString(habitUUID))
+        currentHabit = habitRepository.findById(UUID.fromString(habitUUID))
+    }
+
+    fun setCurrentHabitWithObject(habit: Habit){
+        currentHabit = habit
     }
 }

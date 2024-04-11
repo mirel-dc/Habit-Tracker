@@ -16,11 +16,11 @@ import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.databinding.FragmentHabitsListBinding
 import com.example.habittracker.db.HabitDB
-import com.example.habittracker.db.HabitRepository
+import com.example.habittracker.factory.HabitListViewModelFactory
+import com.example.habittracker.repository.HabitRepository
 import com.example.habittracker.utils.SpacingItemDecorator
 import com.example.habittracker.utils.parcelable
 import com.example.habittracker.viewmodels.HabitListViewModel
-import com.example.habittracker.viewmodels.HabitListViewModelFactory
 
 private const val TAG = "HabitList"
 
@@ -65,7 +65,15 @@ class HabitsListFragment : Fragment() {
         }
         initRecyclerView()
 
-        viewModel.habitsLiveData.observe(viewLifecycleOwner) {
+        //TODO Delete on swipe
+        //HabitDB.getHabitDB(requireContext()).getDao().deleteAllItems()
+
+        HabitDB.getHabitDB(requireContext()).getDao().getAllHabits().observe(viewLifecycleOwner) {
+            viewModel.updateLiveData()
+        }
+
+        viewModel.habitsLiveData.observe(viewLifecycleOwner) {newList ->
+            viewModel.setCurrentList(newList)
             adapter.setNewData(viewModel.getHabitsByType(habitType))
         }
 

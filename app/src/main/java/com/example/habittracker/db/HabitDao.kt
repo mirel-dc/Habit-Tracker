@@ -20,5 +20,8 @@ interface HabitDao {
     fun getAllHabits(): LiveData<List<Habit>>
 
     @Query("SELECT * FROM habits WHERE id = :id")
-    fun findById(id: UUID): Habit?
+    fun findById(id: UUID): Habit
+
+    @Query("DELETE FROM habits")
+    fun deleteAllItems()
 }

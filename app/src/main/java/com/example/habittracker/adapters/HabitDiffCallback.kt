@@ -3,7 +3,7 @@ package com.example.habittracker.adapters
 import androidx.recyclerview.widget.DiffUtil
 import com.example.habittracker.data.models.Habit
 
-class HabitCallback(
+class HabitDiffCallback(
     private val oldList: List<Habit>,
     private val newList: List<Habit>
 ) : DiffUtil.Callback() {

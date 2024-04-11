@@ -9,9 +9,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.example.habittracker.databinding.BottomSheetBinding
 import com.example.habittracker.db.HabitDB
-import com.example.habittracker.db.HabitRepository
+import com.example.habittracker.factory.HabitListViewModelFactory
+import com.example.habittracker.repository.HabitRepository
 import com.example.habittracker.viewmodels.HabitListViewModel
-import com.example.habittracker.viewmodels.HabitListViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
