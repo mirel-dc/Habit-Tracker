@@ -22,6 +22,7 @@ class HabitAdapter(
         this.habits = data.toMutableList()
     }
 
+    //rvadpter -> list adapter
     fun setNewData(newData: List<Habit>) {
         val diffCallback = HabitCallback(habits, newData)
         val diffResult = DiffUtil.calculateDiff(diffCallback)

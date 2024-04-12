@@ -6,11 +6,14 @@
     android:layout_height="200dp"
     android:layout_gravity="center_horizontal"
     android:background="@drawable/border"
-    android:backgroundTint="@color/material_dynamic_neutral100"
+
+    android:backgroundTint="@color/white"
     android:orientation="vertical"
     app:behavior_hideable="false"
     app:behavior_peekHeight="60dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <!-- TODO  Посмотреть цвета на старых api, какие-то краши-->
 
     <TextView
         android:id="@+id/tvFilterAndSearch"

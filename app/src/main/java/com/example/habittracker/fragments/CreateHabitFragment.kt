@@ -143,6 +143,8 @@ class CreateHabitFragment : Fragment() {
     }
 
     //Update ViewModel's habit with data from fields
+
+    //TODO разнести функцию на всякие листенеры, которые будут апдейтить (разделить логику с 1 метода на несколько)
     private fun updateCurrentHabit() = with(binding) {
         viewModel.currentHabit?.name = etName.text.toString()
         viewModel.currentHabit?.description = etDescription.text.toString()
