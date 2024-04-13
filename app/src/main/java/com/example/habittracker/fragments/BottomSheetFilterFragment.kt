@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import com.example.habittracker.R
 import com.example.habittracker.databinding.BottomSheetBinding
 import com.example.habittracker.db.HabitDB
 import com.example.habittracker.factory.HabitListViewModelFactory
@@ -46,7 +47,7 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment() {
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.root.parent as View)
         bottomSheetBehavior.apply {
-            peekHeight = 200
+            peekHeight = resources.getDimension(R.dimen.BottomSheetPeekValue).toInt()
             isDraggable = true
             isHideable = false
         }

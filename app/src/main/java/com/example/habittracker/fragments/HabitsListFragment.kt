@@ -74,16 +74,16 @@ class HabitsListFragment : Fragment() {
 
         viewModel.habitsLiveData.observe(viewLifecycleOwner) {newList ->
             viewModel.setCurrentList(newList)
-            adapter.setNewData(viewModel.getHabitsByType(habitType))
+            adapter.submitList(viewModel.getHabitsByType(habitType))
         }
 
         viewModel.filterByLiveData.observe(requireActivity()) {
-            adapter.setNewData(viewModel.getHabitsByType(habitType))
+            adapter.submitList(viewModel.getHabitsByType(habitType))
         }
 
         viewModel.searchNameLiveData.observe(requireActivity()) {
             Log.d(TAG, "searching $it")
-            adapter.setNewData(viewModel.getHabitsByType(habitType))
+            adapter.submitList(viewModel.getHabitsByType(habitType))
         }
     }
 

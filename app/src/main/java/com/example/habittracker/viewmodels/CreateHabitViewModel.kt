@@ -38,7 +38,7 @@ class CreateHabitViewModel(
             _nameError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty
             _frequencyError.value = R.string.cannot_be_empty
-        }else{
+        } else {
             _nameError.value = null
             _quantityError.value = null
             _frequencyError.value = null
@@ -79,19 +79,7 @@ class CreateHabitViewModel(
     }
 
     fun createHabit() {
-        currentHabit?.let {
-            habitRepository.insertHabit(
-                Habit(
-                    name = it.name,
-                    description = it.description,
-                    type = it.type,
-                    color = it.color,
-                    priority = it.priority,
-                    executionQuantity = it.executionQuantity,
-                    frequency = it.frequency
-                )
-            )
-        }
+        currentHabit?.let { habitRepository.insertHabit(it) }
     }
 
     fun updateHabit() {
@@ -102,7 +90,7 @@ class CreateHabitViewModel(
         currentHabit = habitRepository.findById(UUID.fromString(habitUUID))
     }
 
-    fun setCurrentHabitWithObject(habit: Habit){
+    fun setCurrentHabitWithObject(habit: Habit) {
         currentHabit = habit
     }
 }

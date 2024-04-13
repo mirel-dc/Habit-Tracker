@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
@@ -14,17 +14,7 @@ import com.example.habittracker.databinding.ItemHabitatDataBinding
 class HabitAdapter(
     context: Context,
     private val clickListener: OnRecyclerItemClicked,
-) : RecyclerView.Adapter<HabitAdapter.ViewHolder>() {
-
-    private var habits = mutableListOf<Habit>()
-
-    fun setNewData(newData: List<Habit>) {
-        val diffCallback = HabitDiffCallback(habits, newData)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        habits.clear()
-        habits.addAll(newData)
-        diffResult.dispatchUpdatesTo(this)
-    }
+) : ListAdapter<Habit, HabitAdapter.ViewHolder>(HabitDiffItemCallback()) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -32,14 +22,14 @@ class HabitAdapter(
         return ViewHolder(inflater.inflate(R.layout.item_habitat_data, parent, false))
     }
 
-    override fun getItemCount(): Int = habits.size
+    override fun getItemCount(): Int = currentList.size
 
-    private fun getItem(position: Int): Habit = habits[position]
+    override fun getItem(position: Int): Habit = currentList[position]
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
         holder.itemView.setOnClickListener {
-            clickListener.onRVItemClicked(habits[position])
+            clickListener.onRVItemClicked(currentList[position])
         }
     }
 
