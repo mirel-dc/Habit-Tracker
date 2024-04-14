@@ -6,7 +6,11 @@ import java.util.UUID
 
 class HabitRepository(private val habitDB: HabitDB) {
     fun insertHabit(habit: Habit) {
-        habitDB.getDao().insertHabit(habit)
+        habitDB.getDao().insert(habit)
+    }
+
+    fun deleteHabit(habit: Habit) {
+        habitDB.getDao().delete(habit)
     }
 
     fun updateHabit(habit: Habit) {
@@ -15,7 +19,7 @@ class HabitRepository(private val habitDB: HabitDB) {
 
     fun getAllHabits() = habitDB.getDao().getAllHabits()
 
-    fun findById(uuid: UUID) : Habit {
+    fun findById(uuid: UUID): Habit {
         return habitDB.getDao().findById(uuid)
     }
 }

@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.habittracker.R
 import com.example.habittracker.adapters.HabitAdapter
 import com.example.habittracker.adapters.OnRecyclerItemClicked
 import com.example.habittracker.data.models.Habit
@@ -21,6 +23,7 @@ import com.example.habittracker.repository.HabitRepository
 import com.example.habittracker.utils.SpacingItemDecorator
 import com.example.habittracker.utils.parcelable
 import com.example.habittracker.viewmodels.HabitListViewModel
+import com.google.android.material.snackbar.Snackbar
 
 private const val TAG = "HabitList"
 
@@ -65,14 +68,11 @@ class HabitsListFragment : Fragment() {
         }
         initRecyclerView()
 
-        //TODO Delete on swipe
-        //HabitDB.getHabitDB(requireContext()).getDao().deleteAllItems()
-
         HabitDB.getHabitDB(requireContext()).getDao().getAllHabits().observe(viewLifecycleOwner) {
             viewModel.updateLiveData()
         }
 
-        viewModel.habitsLiveData.observe(viewLifecycleOwner) {newList ->
+        viewModel.habitsLiveData.observe(viewLifecycleOwner) { newList ->
             viewModel.setCurrentList(newList)
             adapter.submitList(viewModel.getHabitsByType(habitType))
         }
@@ -94,7 +94,45 @@ class HabitsListFragment : Fragment() {
 
         binding.rvHabit.adapter = adapter
         binding.rvHabit.addItemDecoration(SpacingItemDecorator(16))
-        binding.rvHabit.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        binding.rvHabit.layoutManager = LinearLayoutManager(
+            context,
+            RecyclerView.VERTICAL,
+            false
+        )
+
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.START
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val habit = adapter.currentList[position]
+                viewModel.deleteHabit(habit)
+
+                Snackbar.make(
+                    requireView(),
+                    getString(R.string.successfully_deleted_habit),
+                    Snackbar.LENGTH_LONG
+                ).apply {
+                    setAction(getString(R.string.undo)) {
+                        viewModel.createHabit(habit)
+                    }
+                    show()
+                }
+            }
+        }
+
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(binding.rvHabit)
+        }
     }
 
 

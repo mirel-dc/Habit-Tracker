@@ -2,6 +2,7 @@ package com.example.habittracker.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -11,10 +12,13 @@ import java.util.UUID
 @Dao
 interface HabitDao {
     @Insert
-    fun insertHabit(habit: Habit)
+    fun insert(habit: Habit)
 
     @Update
     fun update(habit: Habit)
+
+    @Delete
+    fun delete(habit: Habit)
 
     @Query("SELECT * FROM habits")
     fun getAllHabits(): LiveData<List<Habit>>

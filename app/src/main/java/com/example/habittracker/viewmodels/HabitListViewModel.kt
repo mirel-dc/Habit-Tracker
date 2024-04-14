@@ -28,6 +28,19 @@ class HabitListViewModel(
         _searchNameLiveData.value = ""
     }
 
+    fun getHabitsByType(habitType: HabitType): List<Habit> {
+        val list = currentList.filter { it.type == habitType }
+        val searchString = searchNameLiveData.value.toString().trim()
+
+        return if (_filterByLiveData.value == true) {
+            list.sortedBy { it.editDate }
+                .filter { it.name.lowercase().contains(searchString.lowercase()) }
+        } else {
+            list.sortedByDescending { it.editDate }
+                .filter { it.name.lowercase().contains(searchString.lowercase()) }
+        }
+    }
+
     fun updateLiveData() {
         habitsLiveData = habitRepository.getAllHabits()
     }
@@ -48,17 +61,12 @@ class HabitListViewModel(
         currentList = newList
     }
 
-
-    fun getHabitsByType(habitType: HabitType): List<Habit> {
-        val list = currentList.filter { it.type == habitType }
-        val searchString = searchNameLiveData.value.toString().trim()
-
-        return if (_filterByLiveData.value == true) {
-            list.sortedBy { it.editDate }
-                .filter { it.name.lowercase().contains(searchString.lowercase()) }
-        } else {
-            list.sortedByDescending { it.editDate }
-                .filter { it.name.lowercase().contains(searchString.lowercase()) }
-        }
+    fun deleteHabit(habit: Habit) {
+        habitRepository.deleteHabit(habit)
     }
+
+    fun createHabit(habit: Habit) {
+        habitRepository.insertHabit(habit)
+    }
+
 }

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Habit Tracker</string>
-
-    <string name="open_nav">Open Navigation Drawer</string>
-    <string name="close_nav">Close Navigation Drawer</string>
-
     <!-- HabitType Descriptions start -->
     <string name="good_habit">Good</string>
     <string name="bad_habit">Bad</string>
@@ -40,6 +36,8 @@
     <string name="sort_by_date_edited">Sort by date edited</string>
     <string name="filter_ascending">Filter ascending</string>
     <string name="filter_descending">Filter descending</string>
+    <string name="successfully_deleted_habit">Successfully deleted habit</string>
+    <string name="undo">Undo</string>
     <!-- Navigation Item end -->
 
 

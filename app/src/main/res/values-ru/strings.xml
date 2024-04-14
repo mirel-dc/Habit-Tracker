@@ -16,8 +16,6 @@
     <string name="priority">"Приоритет: "</string>
     <string name="week">%1$s / в Неделю</string>
     <string name="habit_type">Тип Привычки:</string>
-    <string name="open_nav">Открыть Навигацию</string>
-    <string name="close_nav">Закрыть Навигацию</string>
     <string name="good_habit">Полезная</string>
     <string name="bad_habit">Вредная</string>
     <string name="home">Домашняя страница</string>
@@ -27,4 +25,6 @@
     <string name="sort_by_date_edited">Сортировать по дате редактирования</string>
     <string name="filter_ascending">Фильтровать по возрастанию</string>
     <string name="filter_descending">Фильтровать по убыванию</string>
+    <string name="successfully_deleted_habit">Привычка успешно удалена</string>
+    <string name="undo">Отмена</string>
 </resources>
