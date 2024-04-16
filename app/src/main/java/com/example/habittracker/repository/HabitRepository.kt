@@ -2,24 +2,28 @@ package com.example.habittracker.repository
 
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.db.HabitDB
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
 class HabitRepository(private val habitDB: HabitDB) {
-    fun insertHabit(habit: Habit) {
+    suspend fun insertHabit(habit: Habit) = withContext(Dispatchers.IO) {
         habitDB.getDao().insert(habit)
     }
 
-    fun deleteHabit(habit: Habit) {
+    suspend fun deleteHabit(habit: Habit) = withContext(Dispatchers.IO) {
         habitDB.getDao().delete(habit)
     }
 
-    fun updateHabit(habit: Habit) {
+    suspend fun updateHabit(habit: Habit) = withContext(Dispatchers.IO) {
         habitDB.getDao().update(habit)
     }
 
     fun getAllHabits() = habitDB.getDao().getAllHabits()
 
-    fun findById(uuid: UUID): Habit {
-        return habitDB.getDao().findById(uuid)
+    suspend fun getHabitById(uuid: UUID): Habit {
+        return withContext(Dispatchers.IO) {
+            habitDB.getDao().getHabitById(uuid)
+        }
     }
 }

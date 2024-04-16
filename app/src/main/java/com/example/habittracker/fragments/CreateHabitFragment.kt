@@ -3,6 +3,7 @@ package com.example.habittracker.fragments
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,13 +63,18 @@ class CreateHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d(TAG, "before set")
+
         //Set chosen RV item's data into View Model
         if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID)
         else viewModel.clearCurrentHabit()
 
+        Log.d(TAG, "after set")
+
+
         createColorBlock()
         initPriorityAdapter()
-        initCurrentHabit()
+        //initCurrentHabit()
         viewModel.initValidationErrors()
 
         viewModel.nameError.observe(viewLifecycleOwner) { errorMessage ->
@@ -86,24 +92,27 @@ class CreateHabitFragment : Fragment() {
                 errorMessage?.let { resources.getString(it) }
         }
 
+        viewModel.currentHabit.observe(viewLifecycleOwner) { habit ->
+            initCurrentHabit(habit)
+        }
+
         submitBtnOnClickListener()
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
     }
 
-
     //init fields with RV item's data
-    private fun initCurrentHabit() = with(binding) {
-        etName.setText(viewModel.currentHabit?.name)
-        etDescription.setText(viewModel.currentHabit?.description)
-        setRadioGroup(viewModel.currentHabit?.type ?: HabitType.GOOD)
-        viewModel.currentHabit?.let { spPriority.setSelection(it.priority - 1) }
-        initTVColor(viewModel.currentHabit?.color ?: 0f)
+    private fun initCurrentHabit(habit: Habit?) = with(binding) {
+        etName.setText(habit?.name)
+        etDescription.setText(habit?.description)
+        setRadioGroup(habit?.type ?: HabitType.GOOD)
+        habit?.let { spPriority.setSelection(it.priority - 1) }
+        initTVColor(habit?.color ?: 0f)
 
-        if (viewModel.currentHabit != null) {
-            etExecutionQuantity.setText(viewModel.currentHabit?.executionQuantity.toString())
-            etFrequency.setText(viewModel.currentHabit?.frequency.toString())
+        if (habit != null) {
+            etExecutionQuantity.setText(habit.executionQuantity.toString())
+            etFrequency.setText(habit.frequency.toString())
         }
     }
 
@@ -139,7 +148,7 @@ class CreateHabitFragment : Fragment() {
     private fun submitBtnOnClickListener() {
         binding.btnSubmit.setOnClickListener {
             if (isValid()) {
-                if (viewModel.currentHabit != null) {
+                if (viewModel.currentHabit.value != null) {
                     updateCurrentHabit()
                     viewModel.updateHabit()
                 } else {
@@ -153,13 +162,14 @@ class CreateHabitFragment : Fragment() {
 
     //Update ViewModel's habit with data from fields
     private fun updateCurrentHabit() = with(binding) {
-        viewModel.currentHabit?.name = etName.text.toString()
-        viewModel.currentHabit?.description = etDescription.text.toString()
-        viewModel.currentHabit?.type = getHabitType()
-        viewModel.currentHabit?.color = hueColor
-        viewModel.currentHabit?.frequency = etFrequency.text.toString().toInt()
-        viewModel.currentHabit?.executionQuantity = etExecutionQuantity.text.toString().toInt()
-        viewModel.currentHabit?.priority = spPriority.selectedItem.toString().toInt()
+        viewModel.currentHabit.value?.name = etName.text.toString()
+        viewModel.currentHabit.value?.description = etDescription.text.toString()
+        viewModel.currentHabit.value?.type = getHabitType()
+        viewModel.currentHabit.value?.color = hueColor
+        viewModel.currentHabit.value?.frequency = etFrequency.text.toString().toInt()
+        viewModel.currentHabit.value?.executionQuantity =
+            etExecutionQuantity.text.toString().toInt()
+        viewModel.currentHabit.value?.priority = spPriority.selectedItem.toString().toInt()
     }
 
     //Geting new Habit from fields to set ViewModel's habit

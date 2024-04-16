@@ -21,7 +21,7 @@ abstract class HabitDB : RoomDatabase() {
                 context.applicationContext,
                 HabitDB::class.java,
                 "Habit.db"
-            ).allowMainThreadQueries().build()
+            ).build()
         }
     }
 }

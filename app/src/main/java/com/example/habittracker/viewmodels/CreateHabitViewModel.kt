@@ -1,12 +1,16 @@
 package com.example.habittracker.viewmodels
 
 import android.text.TextUtils
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.repository.HabitRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 private const val TAG = "CreateHabitViewModel"
@@ -14,9 +18,9 @@ private const val TAG = "CreateHabitViewModel"
 class CreateHabitViewModel(
     private val habitRepository: HabitRepository
 ) : ViewModel() {
-
-    var currentHabit: Habit? = null
+    var currentHabit = MutableLiveData<Habit?>()
         private set
+
     var priorities = arrayOf(1, 2, 3, 4, 5)
         private set
 
@@ -30,11 +34,38 @@ class CreateHabitViewModel(
     val quantityError: LiveData<Int?> = _quantityError
 
     fun clearCurrentHabit() {
-        currentHabit = null
+        currentHabit.value = null
+    }
+
+    fun createHabit() = viewModelScope.launch {
+        Log.d(TAG, currentHabit.value.toString())
+        currentHabit.value.let {
+            if (it != null) {
+                habitRepository.insertHabit(it)
+            }
+        }
+    }
+
+    fun updateHabit() = viewModelScope.launch {
+        currentHabit.value.let {
+            if (it != null) {
+                habitRepository.updateHabit(it)
+            }
+        }
+    }
+
+    fun setCurrentHabitWithUUID(habitUUID: String?) = viewModelScope.launch {
+        val habit = async { habitRepository.getHabitById(UUID.fromString(habitUUID)) }
+        currentHabit.value = habit.await()
+        initValidationErrors()
+    }
+
+    fun setCurrentHabitWithObject(habit: Habit) {
+        currentHabit.value = habit
     }
 
     fun initValidationErrors() {
-        if (currentHabit == null) {
+        if (currentHabit.value == null) {
             _nameError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty
             _frequencyError.value = R.string.cannot_be_empty
@@ -76,21 +107,5 @@ class CreateHabitViewModel(
             _frequencyError.value = null
             true
         }
-    }
-
-    fun createHabit() {
-        currentHabit?.let { habitRepository.insertHabit(it) }
-    }
-
-    fun updateHabit() {
-        currentHabit?.let { habitRepository.updateHabit(it) }
-    }
-
-    fun setCurrentHabitWithUUID(habitUUID: String?) {
-        currentHabit = habitRepository.findById(UUID.fromString(habitUUID))
-    }
-
-    fun setCurrentHabitWithObject(habit: Habit) {
-        currentHabit = habit
     }
 }

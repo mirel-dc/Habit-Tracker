@@ -3,9 +3,11 @@ package com.example.habittracker.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.habittracker.data.models.Habit
 import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.repository.HabitRepository
+import kotlinx.coroutines.launch
 
 private const val TAG = "VM HabitList"
 
@@ -61,12 +63,11 @@ class HabitListViewModel(
         currentList = newList
     }
 
-    fun deleteHabit(habit: Habit) {
+    fun deleteHabit(habit: Habit) = viewModelScope.launch {
         habitRepository.deleteHabit(habit)
     }
 
-    fun createHabit(habit: Habit) {
+    fun createHabit(habit: Habit) = viewModelScope.launch {
         habitRepository.insertHabit(habit)
     }
-
 }
