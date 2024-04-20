@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habittracker.R
 import com.example.habittracker.data.models.Habit
+import com.example.habittracker.data.models.HabitType
 import com.example.habittracker.repository.HabitRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -18,8 +19,10 @@ private const val TAG = "CreateHabitViewModel"
 class CreateHabitViewModel(
     private val habitRepository: HabitRepository
 ) : ViewModel() {
-    var currentHabit = MutableLiveData<Habit?>()
+    var currentHabit = MutableLiveData<Habit>()
         private set
+
+    private var isUpdate = false
 
     var priorities = arrayOf(1, 2, 3, 4, 5)
         private set
@@ -33,39 +36,50 @@ class CreateHabitViewModel(
     private val _quantityError = MutableLiveData<Int?>()
     val quantityError: LiveData<Int?> = _quantityError
 
-    fun clearCurrentHabit() {
-        currentHabit.value = null
+    init {
+        emptyCurrentHabit()
     }
 
-    fun createHabit() = viewModelScope.launch {
+    fun emptyCurrentHabit() {
+        currentHabit.value = Habit(
+            name = "",
+            description = null,
+            priority = 0,
+            executionQuantity = 0,
+            color = 0f,
+            type = HabitType.GOOD,
+            frequency = 0
+        )
+        isUpdate = false
+    }
+
+    private fun createHabit() = viewModelScope.launch {
         Log.d(TAG, currentHabit.value.toString())
         currentHabit.value.let {
             if (it != null) {
-                habitRepository.insertHabit(it)
+                habitRepository.insertHabit(it.copy())
             }
         }
     }
 
-    fun updateHabit() = viewModelScope.launch {
+    private fun updateHabit() = viewModelScope.launch {
         currentHabit.value.let {
             if (it != null) {
                 habitRepository.updateHabit(it)
             }
         }
+
     }
 
     fun setCurrentHabitWithUUID(habitUUID: String?) = viewModelScope.launch {
         val habit = async { habitRepository.getHabitById(UUID.fromString(habitUUID)) }
         currentHabit.value = habit.await()
+        isUpdate = true
         initValidationErrors()
     }
 
-    fun setCurrentHabitWithObject(habit: Habit) {
-        currentHabit.value = habit
-    }
-
     fun initValidationErrors() {
-        if (currentHabit.value == null) {
+        if (!isUpdate) {
             _nameError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty
             _frequencyError.value = R.string.cannot_be_empty
@@ -107,5 +121,25 @@ class CreateHabitViewModel(
             _frequencyError.value = null
             true
         }
+    }
+
+    //Returning true for popBackStack if all fine
+    fun submitBtnAction(): Boolean {
+        return if (isValid()) {
+            if (isUpdate) {
+                updateHabit()
+            } else {
+                createHabit()
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    private fun isValid(): Boolean {
+        return (validateFrequency(currentHabit.value?.frequency.toString())
+                && validateName(currentHabit.value?.name.toString())
+                && validateQuantity(currentHabit.value?.executionQuantity.toString()))
     }
 }

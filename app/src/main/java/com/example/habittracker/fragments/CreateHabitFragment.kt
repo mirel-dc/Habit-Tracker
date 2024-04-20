@@ -3,14 +3,14 @@ package com.example.habittracker.fragments
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
@@ -44,7 +44,6 @@ class CreateHabitFragment : Fragment() {
         }
     }
     private val args: CreateHabitFragmentArgs by navArgs()
-    private var hueColor = 0f
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,18 +62,12 @@ class CreateHabitFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d(TAG, "before set")
-
         //Set chosen RV item's data into View Model
         if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID)
-        else viewModel.clearCurrentHabit()
-
-        Log.d(TAG, "after set")
-
+        else viewModel.emptyCurrentHabit()
 
         createColorBlock()
         initPriorityAdapter()
-        //initCurrentHabit()
         viewModel.initValidationErrors()
 
         viewModel.nameError.observe(viewLifecycleOwner) { errorMessage ->
@@ -96,10 +89,12 @@ class CreateHabitFragment : Fragment() {
             initCurrentHabit(habit)
         }
 
+        habitFieldsListeners()
         submitBtnOnClickListener()
         habitNameFocusListener()
         habitQuantityFocusListener()
         habitFrequencyFocusListener()
+
     }
 
     //init fields with RV item's data
@@ -109,11 +104,8 @@ class CreateHabitFragment : Fragment() {
         setRadioGroup(habit?.type ?: HabitType.GOOD)
         habit?.let { spPriority.setSelection(it.priority - 1) }
         initTVColor(habit?.color ?: 0f)
-
-        if (habit != null) {
-            etExecutionQuantity.setText(habit.executionQuantity.toString())
-            etFrequency.setText(habit.frequency.toString())
-        }
+        etExecutionQuantity.setText(habit?.executionQuantity.toString())
+        etFrequency.setText(habit?.frequency.toString())
     }
 
     private fun initPriorityAdapter() {
@@ -134,69 +126,59 @@ class CreateHabitFragment : Fragment() {
     }
 
 
-    private fun getHabitType(): HabitType = with(binding) {
-        return when (true) {
-            rbGood.isChecked -> HabitType.GOOD
-            rbBad.isChecked -> HabitType.BAD
-            else -> {
-                HabitType.GOOD
-            }
-        }
-    }
-
     //Submitting Habit group
     private fun submitBtnOnClickListener() {
         binding.btnSubmit.setOnClickListener {
-            if (isValid()) {
-                if (viewModel.currentHabit.value != null) {
-                    updateCurrentHabit()
-                    viewModel.updateHabit()
-                } else {
-                    viewModel.setCurrentHabitWithObject(getHabitFromFields())
-                    viewModel.createHabit()
-                }
+            //Returns True when submit is valid
+            if (viewModel.submitBtnAction())
                 findNavController().popBackStack()
+        }
+    }
+
+
+    private fun habitFieldsListeners() = with(binding) {
+        etName.addTextChangedListener {
+            viewModel.currentHabit.value?.name = it.toString()
+        }
+
+        etDescription.addTextChangedListener {
+            viewModel.currentHabit.value?.description = it.toString()
+        }
+
+        etExecutionQuantity.addTextChangedListener {
+            viewModel.validateQuantity(it.toString())
+            if (it.toString() != "")
+                viewModel.currentHabit.value?.executionQuantity = it.toString().toInt()
+        }
+
+        etFrequency.addTextChangedListener {
+            viewModel.validateFrequency(it.toString())
+            if (it.toString() != "")
+                viewModel.currentHabit.value?.frequency = it.toString().toInt()
+        }
+
+        spPriority.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.currentHabit.value?.priority = position + 1
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        binding.rgHabitType.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                binding.rbGood.id -> viewModel.currentHabit.value?.type = HabitType.GOOD
+                binding.rbBad.id -> viewModel.currentHabit.value?.type = HabitType.BAD
             }
         }
-    }
 
-    //Update ViewModel's habit with data from fields
-    private fun updateCurrentHabit() = with(binding) {
-        viewModel.currentHabit.value?.name = etName.text.toString()
-        viewModel.currentHabit.value?.description = etDescription.text.toString()
-        viewModel.currentHabit.value?.type = getHabitType()
-        viewModel.currentHabit.value?.color = hueColor
-        viewModel.currentHabit.value?.frequency = etFrequency.text.toString().toInt()
-        viewModel.currentHabit.value?.executionQuantity =
-            etExecutionQuantity.text.toString().toInt()
-        viewModel.currentHabit.value?.priority = spPriority.selectedItem.toString().toInt()
+        //Color listener in ColorBlock
     }
-
-    //Geting new Habit from fields to set ViewModel's habit
-    private fun getHabitFromFields(): Habit = with(binding) {
-        return Habit(
-            name = etName.text.toString(),
-            description = etDescription.text.toString(),
-            type = getHabitType(),
-            color = hueColor,
-            priority = spPriority.selectedItem.toString().toInt(),
-            executionQuantity = etExecutionQuantity.text.toString().toInt(),
-            frequency = etFrequency.text.toString().toInt()
-        )
-    }
-
-    private fun isValid(): Boolean {
-        return if (viewModel.validateQuantity(binding.etExecutionQuantity.text.toString())
-            && viewModel.validateName(binding.etName.text.toString())
-            && viewModel.validateFrequency(binding.etFrequency.text.toString())
-        ) true
-        else {
-            Toast.makeText(requireContext(), getString(R.string.invalid_form), Toast.LENGTH_SHORT)
-                .show()
-            false
-        }
-    }
-
 
     //EditText Helpers
     private fun habitNameFocusListener() {
@@ -251,7 +233,10 @@ class CreateHabitFragment : Fragment() {
                 layoutParams = buttonParams
                 text = "$i"
                 setBackgroundResource(R.drawable.border_color_square)
-                setOnClickListener { setColor(squareSide, squareMargin, squareQuantity, i) }
+                setOnClickListener {
+                    viewModel.currentHabit.value?.color =
+                        setColor(squareSide, squareMargin, squareQuantity, i)
+                }
             }
             context?.let { button.setTextColor(it.getColor(R.color.white)) }
             linearLayout.addView(button)
@@ -265,22 +250,22 @@ class CreateHabitFragment : Fragment() {
         linearLayout.background = gradientDrawable
     }
 
-    private fun setColor(squareSide: Int, squareMargin: Int, squareQuantity: Int, i: Int) {
+    private fun setColor(squareSide: Int, squareMargin: Int, squareQuantity: Int, i: Int): Float {
         val squareLength: Float = 2f * squareMargin + squareSide
         val middlePoint: Float =
             (squareLength * i - (squareSide / 2 + squareMargin)) / (squareLength * squareQuantity) * 360
 
         initTVColor(middlePoint)
+        return middlePoint
     }
 
     private fun initTVColor(hue: Float) {
-        hueColor = hue
         binding.tvColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(hue, 1f, 1f)))
         val rgbColor = Color.HSVToColor(floatArrayOf(hue, 1f, 1f))
         binding.tvColor.text =
             getString(
                 R.string.current_color_hsv_rgb,
-                hueColor,
+                hue,
                 Color.red(rgbColor),
                 Color.green(rgbColor),
                 Color.blue(rgbColor)
