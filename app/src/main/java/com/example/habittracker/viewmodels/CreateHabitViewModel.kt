@@ -1,7 +1,6 @@
 package com.example.habittracker.viewmodels
 
 import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -54,7 +53,6 @@ class CreateHabitViewModel(
     }
 
     private fun createHabit() = viewModelScope.launch {
-        Log.d(TAG, currentHabit.value.toString())
         currentHabit.value.let {
             if (it != null) {
                 habitRepository.insertHabit(it.copy())

@@ -1,7 +1,6 @@
 package com.example.habittracker.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,7 +81,6 @@ class HabitsListFragment : Fragment() {
         }
 
         viewModel.searchNameLiveData.observe(requireActivity()) {
-            Log.d(TAG, "searching $it")
             adapter.submitList(viewModel.getHabitsByType(habitType))
         }
     }
