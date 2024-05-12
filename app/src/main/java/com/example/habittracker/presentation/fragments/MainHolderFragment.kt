@@ -1,4 +1,4 @@
-package com.example.habittracker.fragments
+package com.example.habittracker.presentation.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.example.habittracker.adapters.TypeFragmentAdapter
-import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.databinding.FragmentMainHolderBinding
+import com.example.habittracker.presentation.adapters.TypeFragmentAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainHolderFragment : Fragment() {
@@ -58,7 +58,10 @@ class MainHolderFragment : Fragment() {
             .commit()
 
         binding.fabCreateHabit.setOnClickListener {
-            val navAction = MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(null)
+            val navAction =
+                MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(
+                    null
+                )
             findNavController().navigate(navAction)
         }
     }

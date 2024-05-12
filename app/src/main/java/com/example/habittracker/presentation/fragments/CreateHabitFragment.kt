@@ -1,4 +1,4 @@
-package com.example.habittracker.fragments
+package com.example.habittracker.presentation.fragments
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -18,12 +18,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.habittracker.R
-import com.example.habittracker.data.models.Habit
-import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.data.local.db.HabitDB
+import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitType
+import com.example.habittracker.data.repository.HabitRepository
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
-import com.example.habittracker.db.HabitDB
-import com.example.habittracker.repository.HabitRepository
-import com.example.habittracker.viewmodels.CreateHabitViewModel
+import com.example.habittracker.presentation.viewmodels.CreateHabitViewModel
 
 private const val TAG = "CreateHabitFragment"
 
@@ -39,7 +39,7 @@ class CreateHabitFragment : Fragment() {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
-                return CreateHabitViewModel(HabitRepository(HabitDB.getHabitDB(requireContext()))) as T
+                return CreateHabitViewModel(HabitRepository(HabitDB(requireContext()))) as T
             }
         }
     }
@@ -98,14 +98,14 @@ class CreateHabitFragment : Fragment() {
     }
 
     //init fields with RV item's data
-    private fun initCurrentHabit(habit: Habit?) = with(binding) {
-        etName.setText(habit?.name)
-        etDescription.setText(habit?.description)
-        setRadioGroup(habit?.type ?: HabitType.GOOD)
-        habit?.let { spPriority.setSelection(it.priority - 1) }
-        initTVColor(habit?.color ?: 0f)
-        etExecutionQuantity.setText(habit?.executionQuantity.toString())
-        etFrequency.setText(habit?.frequency.toString())
+    private fun initCurrentHabit(habitEntity: HabitEntity?) = with(binding) {
+        etName.setText(habitEntity?.name)
+        etDescription.setText(habitEntity?.description)
+        setRadioGroup(habitEntity?.type ?: HabitType.GOOD)
+        habitEntity?.let { spPriority.setSelection(it.priority - 1) }
+        initTVColor(habitEntity?.color ?: 0f)
+        etExecutionQuantity.setText(habitEntity?.executionQuantity.toString())
+        etFrequency.setText(habitEntity?.frequency.toString())
     }
 
     private fun initPriorityAdapter() {

@@ -1,8 +1,8 @@
-package com.example.habittracker.factory
+package com.example.habittracker.presentation.viewmodels.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.habittracker.repository.HabitRepository
+import com.example.habittracker.data.repository.HabitRepository
 
 class HabitListViewModelFactory(private val habitRepository: HabitRepository) :
     ViewModelProvider.Factory {

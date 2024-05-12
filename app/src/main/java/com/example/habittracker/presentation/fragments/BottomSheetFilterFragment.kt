@@ -1,4 +1,4 @@
-package com.example.habittracker.fragments
+package com.example.habittracker.presentation.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.example.habittracker.R
+import com.example.habittracker.data.local.db.HabitDB
+import com.example.habittracker.data.repository.HabitRepository
 import com.example.habittracker.databinding.BottomSheetBinding
-import com.example.habittracker.db.HabitDB
-import com.example.habittracker.factory.HabitListViewModelFactory
-import com.example.habittracker.repository.HabitRepository
-import com.example.habittracker.viewmodels.HabitListViewModel
+import com.example.habittracker.presentation.viewmodels.HabitListViewModel
+import com.example.habittracker.presentation.viewmodels.factory.HabitListViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -24,7 +24,7 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment() {
             ?: throw IllegalStateException("Binding for BottomSheetFilterFragment must not be null")
 
     private val viewModel: HabitListViewModel by activityViewModels {
-        HabitListViewModelFactory(HabitRepository(HabitDB.getHabitDB(requireContext())))
+        HabitListViewModelFactory(HabitRepository(HabitDB(requireContext())))
     }
 
 

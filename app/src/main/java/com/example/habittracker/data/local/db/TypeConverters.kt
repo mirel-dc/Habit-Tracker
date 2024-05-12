@@ -1,7 +1,7 @@
-package com.example.habittracker.db
+package com.example.habittracker.data.local.db
 
 import androidx.room.TypeConverter
-import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.data.local.entity.HabitType
 import java.util.UUID
 
 class HabitTypeConverter {

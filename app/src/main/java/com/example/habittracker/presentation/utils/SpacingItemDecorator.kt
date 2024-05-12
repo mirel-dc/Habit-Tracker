@@ -1,4 +1,4 @@
-package com.example.habittracker.utils
+package com.example.habittracker.presentation.utils
 
 import android.graphics.Rect
 import android.view.View

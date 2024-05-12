@@ -1,4 +1,4 @@
-package com.example.habittracker.utils
+package com.example.habittracker.presentation.utils
 
 import android.os.Build
 import android.os.Bundle

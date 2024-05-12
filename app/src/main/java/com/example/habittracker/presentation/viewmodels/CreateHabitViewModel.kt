@@ -1,4 +1,4 @@
-package com.example.habittracker.viewmodels
+package com.example.habittracker.presentation.viewmodels
 
 import android.text.TextUtils
 import androidx.lifecycle.LiveData
@@ -6,9 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habittracker.R
-import com.example.habittracker.data.models.Habit
-import com.example.habittracker.data.models.HabitType
-import com.example.habittracker.repository.HabitRepository
+import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitType
+import com.example.habittracker.data.repository.HabitRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -18,12 +18,12 @@ private const val TAG = "CreateHabitViewModel"
 class CreateHabitViewModel(
     private val habitRepository: HabitRepository
 ) : ViewModel() {
-    var currentHabit = MutableLiveData<Habit>()
+    var currentHabit = MutableLiveData<HabitEntity>()
         private set
 
     private var isUpdate = false
 
-    var priorities = arrayOf(1, 2, 3, 4, 5)
+    var priorities = arrayOf(1, 2, 3)
         private set
 
     private val _nameError = MutableLiveData<Int?>()
@@ -40,7 +40,7 @@ class CreateHabitViewModel(
     }
 
     fun emptyCurrentHabit() {
-        currentHabit.value = Habit(
+        currentHabit.value = HabitEntity(
             name = "",
             description = null,
             priority = 0,
@@ -55,7 +55,7 @@ class CreateHabitViewModel(
     private fun createHabit() = viewModelScope.launch {
         currentHabit.value.let {
             if (it != null) {
-                habitRepository.insertHabit(it.copy())
+                habitRepository.insertHabit(it)
             }
         }
     }
@@ -66,7 +66,6 @@ class CreateHabitViewModel(
                 habitRepository.updateHabit(it)
             }
         }
-
     }
 
     fun setCurrentHabitWithUUID(habitUUID: String?) = viewModelScope.launch {

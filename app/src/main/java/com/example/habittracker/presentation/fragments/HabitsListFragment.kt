@@ -1,6 +1,7 @@
-package com.example.habittracker.fragments
+package com.example.habittracker.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,20 +12,20 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habittracker.R
-import com.example.habittracker.adapters.HabitAdapter
-import com.example.habittracker.adapters.OnRecyclerItemClicked
-import com.example.habittracker.data.models.Habit
-import com.example.habittracker.data.models.HabitType
+import com.example.habittracker.data.local.db.HabitDB
+import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitType
+import com.example.habittracker.data.repository.HabitRepository
 import com.example.habittracker.databinding.FragmentHabitsListBinding
-import com.example.habittracker.db.HabitDB
-import com.example.habittracker.factory.HabitListViewModelFactory
-import com.example.habittracker.repository.HabitRepository
-import com.example.habittracker.utils.SpacingItemDecorator
-import com.example.habittracker.utils.parcelable
-import com.example.habittracker.viewmodels.HabitListViewModel
+import com.example.habittracker.presentation.adapters.HabitAdapter
+import com.example.habittracker.presentation.adapters.OnRecyclerItemClicked
+import com.example.habittracker.presentation.utils.SpacingItemDecorator
+import com.example.habittracker.presentation.utils.parcelable
+import com.example.habittracker.presentation.viewmodels.HabitListViewModel
+import com.example.habittracker.presentation.viewmodels.factory.HabitListViewModelFactory
 import com.google.android.material.snackbar.Snackbar
 
-private const val TAG = "HabitList"
+private const val TAG = "HabitListFragment"
 
 class HabitsListFragment : Fragment() {
 
@@ -38,7 +39,7 @@ class HabitsListFragment : Fragment() {
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
 
     private val viewModel: HabitListViewModel by activityViewModels {
-        HabitListViewModelFactory(HabitRepository(HabitDB.getHabitDB(requireContext())))
+        HabitListViewModelFactory(HabitRepository(HabitDB(requireContext())))
     }
     private lateinit var habitType: HabitType
 
@@ -67,11 +68,9 @@ class HabitsListFragment : Fragment() {
         }
         initRecyclerView()
 
-        HabitDB.getHabitDB(requireContext()).getDao().getAllHabits().observe(viewLifecycleOwner) {
-            viewModel.updateLiveData()
-        }
 
         viewModel.habitsLiveData.observe(viewLifecycleOwner) { newList ->
+            Log.d(TAG, newList.toString())
             viewModel.setCurrentList(newList)
             adapter.submitList(viewModel.getHabitsByType(habitType))
         }
@@ -98,6 +97,7 @@ class HabitsListFragment : Fragment() {
             false
         )
 
+        //Deleting item with swipe left
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             0,
             ItemTouchHelper.START
@@ -136,14 +136,14 @@ class HabitsListFragment : Fragment() {
 
     //rvItemOnClick
     private val clickListener = object : OnRecyclerItemClicked {
-        override fun onRVItemClicked(habit: Habit) {
-            doOnRVItemClicked(habit)
+        override fun onRVItemClicked(habitEntity: HabitEntity) {
+            doOnRVItemClicked(habitEntity)
         }
     }
 
-    private fun doOnRVItemClicked(habit: Habit) {
+    private fun doOnRVItemClicked(habitEntity: HabitEntity) {
         val navAction =
-            MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habit.id.toString())
+            MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habitEntity.id.toString())
         findNavController().navigate(navAction)
     }
 
