@@ -27,4 +27,5 @@
     <string name="filter_descending">Фильтровать по убыванию</string>
     <string name="successfully_deleted_habit">Привычка успешно удалена</string>
     <string name="undo">Отмена</string>
+    <string name="incorrectly_filled_fields">Неправильно заполнены поля</string>
 </resources>

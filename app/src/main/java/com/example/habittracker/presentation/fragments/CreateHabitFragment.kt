@@ -10,11 +10,15 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.habittracker.R
@@ -24,6 +28,10 @@ import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.data.repository.HabitRepository
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
 import com.example.habittracker.presentation.viewmodels.CreateHabitViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "CreateHabitFragment"
 
@@ -68,10 +76,29 @@ class CreateHabitFragment : Fragment() {
 
         createColorBlock()
         initPriorityAdapter()
+
+        focusListeners()
+        initViewModelObservers()
+        fieldsListeners()
+    }
+
+    private fun focusListeners() {
+        habitNameFocusListener()
+        habitQuantityFocusListener()
+        habitFrequencyFocusListener()
+        habitDescriptionFocusListener()
+    }
+
+    private fun initViewModelObservers() {
         viewModel.initValidationErrors()
 
         viewModel.nameError.observe(viewLifecycleOwner) { errorMessage ->
             binding.containerName.helperText =
+                errorMessage?.let { resources.getString(it) }
+        }
+
+        viewModel.descriptionError.observe(viewLifecycleOwner) { errorMessage ->
+            binding.containerDescription.helperText =
                 errorMessage?.let { resources.getString(it) }
         }
 
@@ -89,54 +116,22 @@ class CreateHabitFragment : Fragment() {
             initCurrentHabit(habit)
         }
 
-        habitFieldsListeners()
-        submitBtnOnClickListener()
-        habitNameFocusListener()
-        habitQuantityFocusListener()
-        habitFrequencyFocusListener()
-
-    }
-
-    //init fields with RV item's data
-    private fun initCurrentHabit(habitEntity: HabitEntity?) = with(binding) {
-        etName.setText(habitEntity?.name)
-        etDescription.setText(habitEntity?.description)
-        setRadioGroup(habitEntity?.type ?: HabitType.GOOD)
-        habitEntity?.let { spPriority.setSelection(it.priority - 1) }
-        initTVColor(habitEntity?.color ?: 0f)
-        etExecutionQuantity.setText(habitEntity?.executionQuantity.toString())
-        etFrequency.setText(habitEntity?.frequency.toString())
-    }
-
-    private fun initPriorityAdapter() {
-        val prioritiesArrayAdapter =
-            ArrayAdapter(
-                requireContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                viewModel.priorities
-            )
-        binding.spPriority.adapter = prioritiesArrayAdapter
-    }
-
-    private fun setRadioGroup(habitType: HabitType) = with(binding) {
-        when (habitType) {
-            HabitType.GOOD -> rbGood.isChecked = true
-            HabitType.BAD -> rbBad.isChecked = true
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                withContext(Dispatchers.Main) {
+                    viewModel.toastFlow.collectLatest {
+                        Toast.makeText(
+                            requireContext(),
+                            resources.getString(it),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
-
-    //Submitting Habit group
-    private fun submitBtnOnClickListener() {
-        binding.btnSubmit.setOnClickListener {
-            //Returns True when submit is valid
-            if (viewModel.submitBtnAction())
-                findNavController().popBackStack()
-        }
-    }
-
-
-    private fun habitFieldsListeners() = with(binding) {
+    private fun fieldsListeners() = with(binding) {
         etName.addTextChangedListener {
             viewModel.currentHabit.value?.name = it.toString()
         }
@@ -177,7 +172,48 @@ class CreateHabitFragment : Fragment() {
             }
         }
 
+        submitBtnOnClickListener()
+
         //Color listener in ColorBlock
+    }
+
+
+    //init fields with RV item's data
+    private fun initCurrentHabit(habitEntity: HabitEntity?) = with(binding) {
+        etName.setText(habitEntity?.name)
+        etDescription.setText(habitEntity?.description)
+        setRadioGroup(habitEntity?.type ?: HabitType.GOOD)
+        habitEntity?.let { spPriority.setSelection(it.priority - 1) }
+        initTVColor(habitEntity?.color ?: 0f)
+        etExecutionQuantity.setText(habitEntity?.executionQuantity.toString())
+        etFrequency.setText(habitEntity?.frequency.toString())
+    }
+
+    private fun initPriorityAdapter() {
+        val prioritiesArrayAdapter =
+            ArrayAdapter(
+                requireContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                viewModel.priorities
+            )
+        binding.spPriority.adapter = prioritiesArrayAdapter
+    }
+
+    private fun setRadioGroup(habitType: HabitType) = with(binding) {
+        when (habitType) {
+            HabitType.GOOD -> rbGood.isChecked = true
+            HabitType.BAD -> rbBad.isChecked = true
+        }
+    }
+
+
+    //Submitting Habit group
+    private fun submitBtnOnClickListener() {
+        binding.btnSubmit.setOnClickListener {
+            //Returns True when submit is valid
+            if (viewModel.submitBtnAction())
+                findNavController().popBackStack()
+        }
     }
 
     //EditText Helpers
@@ -185,6 +221,14 @@ class CreateHabitFragment : Fragment() {
         binding.etName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 viewModel.validateName(binding.etName.text.toString())
+            }
+        }
+    }
+
+    private fun habitDescriptionFocusListener() {
+        binding.etDescription.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                viewModel.validateDescription(binding.etDescription.text.toString())
             }
         }
     }

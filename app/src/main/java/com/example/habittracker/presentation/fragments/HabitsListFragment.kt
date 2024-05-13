@@ -66,9 +66,12 @@ class HabitsListFragment : Fragment() {
         arguments?.takeIf { it.containsKey(PARAM_TYPE) }?.apply {
             habitType = parcelable(PARAM_TYPE)!!
         }
+
         initRecyclerView()
+        initViewModelObservers()
+    }
 
-
+    private fun initViewModelObservers() {
         viewModel.habitsLiveData.observe(viewLifecycleOwner) { newList ->
             Log.d(TAG, newList.toString())
             viewModel.setCurrentList(newList)

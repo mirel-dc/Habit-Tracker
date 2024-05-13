@@ -1,6 +1,7 @@
 package com.example.habittracker
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -8,6 +9,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.example.habittracker.databinding.ActivityMainBinding
 
 private const val TAG = "MainActivity"
@@ -41,6 +44,17 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, conf)
         binding.navView.setupWithNavController(navController)
+
+        val userIcon = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon)
+
+        Glide.with(this)
+            .load("https://www.boredpanda.com/blog/wp-content/uploads/2015/06/pallas-cat-manul-10__880.jpg")
+            .placeholder(R.drawable.user_icon_placeholder)
+            .error(R.drawable.user_icon_error)
+            .override(resources.getDimensionPixelSize(R.dimen.headerIconSize))
+            .centerCrop()
+            .transform(CircleCrop())
+            .into(userIcon)
     }
 
     override fun onSupportNavigateUp(): Boolean {

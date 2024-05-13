@@ -38,6 +38,7 @@
     <string name="filter_descending">Filter descending</string>
     <string name="successfully_deleted_habit">Successfully deleted habit</string>
     <string name="undo">Undo</string>
+    <string name="incorrectly_filled_fields">Incorrectly filled fields</string>
     <!-- Navigation Item end -->
 
 

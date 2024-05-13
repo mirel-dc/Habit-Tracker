@@ -25,7 +25,7 @@ class HabitListViewModel(
 
     init {
         importHabitsFromApi()
-        _filterByLiveData.value = true
+        _filterByLiveData.value = false
         _searchNameLiveData.value = ""
     }
 

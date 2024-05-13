@@ -10,6 +10,8 @@ import com.example.habittracker.data.local.entity.HabitEntity
 import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.data.repository.HabitRepository
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -29,11 +31,17 @@ class CreateHabitViewModel(
     private val _nameError = MutableLiveData<Int?>()
     val nameError: LiveData<Int?> = _nameError
 
+    private val _descriptionError = MutableLiveData<Int?>()
+    val descriptionError: LiveData<Int?> = _descriptionError
+
     private val _frequencyError = MutableLiveData<Int?>()
     val frequencyError: LiveData<Int?> = _frequencyError
 
     private val _quantityError = MutableLiveData<Int?>()
     val quantityError: LiveData<Int?> = _quantityError
+
+    private val toastChannel = Channel<Int>()
+    val toastFlow = toastChannel.receiveAsFlow()
 
     init {
         emptyCurrentHabit()
@@ -42,7 +50,7 @@ class CreateHabitViewModel(
     fun emptyCurrentHabit() {
         currentHabit.value = HabitEntity(
             name = "",
-            description = null,
+            description = "",
             priority = 0,
             executionQuantity = 0,
             color = 0f,
@@ -50,6 +58,23 @@ class CreateHabitViewModel(
             frequency = 0
         )
         isUpdate = false
+    }
+
+    //Returning true for popBackStack if all fine
+    fun submitBtnAction(): Boolean {
+        return if (isValid()) {
+            if (isUpdate) {
+                updateHabit()
+            } else {
+                createHabit()
+            }
+            true
+        } else {
+            viewModelScope.launch {
+                toastChannel.send(R.string.incorrectly_filled_fields)
+            }
+            false
+        }
     }
 
     private fun createHabit() = viewModelScope.launch {
@@ -78,10 +103,12 @@ class CreateHabitViewModel(
     fun initValidationErrors() {
         if (!isUpdate) {
             _nameError.value = R.string.cannot_be_empty
+            _descriptionError.value = R.string.cannot_be_empty
             _quantityError.value = R.string.cannot_be_empty
             _frequencyError.value = R.string.cannot_be_empty
         } else {
             _nameError.value = null
+            _descriptionError.value = null
             _quantityError.value = null
             _frequencyError.value = null
         }
@@ -93,6 +120,16 @@ class CreateHabitViewModel(
             false
         } else {
             _nameError.value = null
+            true
+        }
+    }
+
+    fun validateDescription(enteredName: String): Boolean {
+        return if (TextUtils.isEmpty(enteredName)) {
+            _descriptionError.value = R.string.cannot_be_empty
+            false
+        } else {
+            _descriptionError.value = null
             true
         }
     }
@@ -111,32 +148,17 @@ class CreateHabitViewModel(
         return if (enteredFrequency == "") {
             _frequencyError.value = R.string.cannot_be_empty
             false
-        } else if (enteredFrequency.toInt() > 7) {
-            _frequencyError.value = R.string.cannot_be_more_then_7
-            false
         } else {
             _frequencyError.value = null
             true
         }
     }
 
-    //Returning true for popBackStack if all fine
-    fun submitBtnAction(): Boolean {
-        return if (isValid()) {
-            if (isUpdate) {
-                updateHabit()
-            } else {
-                createHabit()
-            }
-            true
-        } else {
-            false
-        }
-    }
 
     private fun isValid(): Boolean {
         return (validateFrequency(currentHabit.value?.frequency.toString())
                 && validateName(currentHabit.value?.name.toString())
-                && validateQuantity(currentHabit.value?.executionQuantity.toString()))
+                && validateQuantity(currentHabit.value?.executionQuantity.toString())
+                && validateDescription(currentHabit.value?.description.toString()))
     }
 }

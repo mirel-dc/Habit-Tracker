@@ -9,7 +9,7 @@ import com.example.habittracker.data.local.entity.HabitEntity
 
 @Database(
     entities = [HabitEntity::class],
-    version = 1
+    version = 2,
 )
 @TypeConverters(HabitTypeConverter::class, UUIDConverter::class)
 abstract class HabitDB : RoomDatabase() {
@@ -17,6 +17,7 @@ abstract class HabitDB : RoomDatabase() {
 
     //нужен сингинстанс, потому что иначе при добавлении из фрагмента создания, не отображается
     //хотя и появляется запись в бд
+    //как я понял, пофикситься с DI
     companion object {
         @Volatile
         private var instance: HabitDB? = null

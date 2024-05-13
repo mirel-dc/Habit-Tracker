@@ -3,22 +3,15 @@ package com.example.habittracker.data.remote
 import com.example.habittracker.data.local.entity.HabitType
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
-import java.lang.reflect.Type
 import java.util.UUID
 
 val gson: Gson = GsonBuilder()
-    //.setPrettyPrinting()
+    .setPrettyPrinting()
     .registerTypeAdapter(UUID::class.java, UUIDTypeAdapter())
-    //.registerTypeAdapter(HabitType::class.java, HabitTypeTypeAdapter())
+    .registerTypeAdapter(HabitType::class.java, HabitTypeTypeAdapter())
     .create()
 
 class UUIDTypeAdapter : TypeAdapter<UUID>() {
@@ -32,22 +25,25 @@ class UUIDTypeAdapter : TypeAdapter<UUID>() {
     }
 }
 
-class HabitTypeTypeAdapter : JsonSerializer<HabitType>, JsonDeserializer<HabitType> {
-    override fun serialize(
-        src: HabitType?,
-        typeOfSrc: Type?,
-        context: JsonSerializationContext?
-    ): JsonElement = JsonObject().apply {
-        if (src != null) {
-            addProperty("type", src.resId)
+class HabitTypeTypeAdapter : TypeAdapter<HabitType>() {
+    override fun write(out: JsonWriter, value: HabitType?) {
+        out.beginObject()
+        if (value != null) {
+            out.name("type").value(value.resId)
         }
+        out.endObject()
     }
 
-    override fun deserialize(
-        json: JsonElement,
-        typeOfT: Type?,
-        context: JsonDeserializationContext?
-    ): HabitType = HabitType.getByResId(
-        json.asJsonObject.get("type").asInt
-    )
+    override fun read(`in`: JsonReader): HabitType {
+        `in`.beginObject()
+        var resId = 0
+        while (`in`.hasNext()) {
+            when (`in`.nextName()) {
+                "type" -> resId = `in`.nextInt()
+                else -> `in`.skipValue()
+            }
+        }
+        `in`.endObject()
+        return HabitType.getByResId(resId)
+    }
 }
