@@ -46,8 +46,18 @@ class MainHolderFragment : Fragment() {
             binding.habitTypeViewPager2
         ) { tab, position ->
             when (position) {
-                0 -> tab.text = getString(HabitType.GOOD.resId)
-                1 -> tab.text = getString(HabitType.BAD.resId)
+                0 -> tab.text =
+                    getString(
+                        HabitType.getResourceIdByType(
+                            HabitType.getHabitTypeByValue(position)
+                        )
+                    )
+
+                1 -> tab.text = getString(
+                    HabitType.getResourceIdByType(
+                        HabitType.getHabitTypeByValue(position)
+                    )
+                )
             }
         }.attach()
 

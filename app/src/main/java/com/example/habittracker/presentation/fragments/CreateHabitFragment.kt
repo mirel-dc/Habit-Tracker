@@ -24,6 +24,7 @@ import androidx.navigation.fragment.navArgs
 import com.example.habittracker.R
 import com.example.habittracker.data.local.db.HabitDB
 import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitPriority
 import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.data.repository.HabitRepository
 import com.example.habittracker.databinding.FragmentCreateHabitBinding
@@ -159,7 +160,8 @@ class CreateHabitFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                viewModel.currentHabit.value?.priority = position + 1
+                viewModel.currentHabit.value?.priority =
+                    HabitPriority.getHabitPriorityByValue(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -183,7 +185,7 @@ class CreateHabitFragment : Fragment() {
         etName.setText(habitEntity?.name)
         etDescription.setText(habitEntity?.description)
         setRadioGroup(habitEntity?.type ?: HabitType.GOOD)
-        habitEntity?.let { spPriority.setSelection(it.priority - 1) }
+        habitEntity?.let { spPriority.setSelection(it.priority.value) }
         initTVColor(habitEntity?.color ?: 0f)
         etExecutionQuantity.setText(habitEntity?.executionQuantity.toString())
         etFrequency.setText(habitEntity?.frequency.toString())
@@ -194,7 +196,9 @@ class CreateHabitFragment : Fragment() {
             ArrayAdapter(
                 requireContext(),
                 android.R.layout.simple_spinner_dropdown_item,
-                viewModel.priorities
+                viewModel.priorities.map { resId ->
+                    requireContext().resources.getString(resId)
+                }
             )
         binding.spPriority.adapter = prioritiesArrayAdapter
     }

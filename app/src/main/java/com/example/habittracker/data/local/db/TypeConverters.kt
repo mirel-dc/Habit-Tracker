@@ -7,12 +7,12 @@ import java.util.UUID
 class HabitTypeConverter {
     @TypeConverter
     fun fromHabitType(habitType: HabitType): Int {
-        return habitType.resId
+        return habitType.value
     }
 
     @TypeConverter
-    fun toHabitType(resId: Int): HabitType {
-        return HabitType.getByResId(resId)
+    fun toHabitType(value: Int): HabitType {
+        return HabitType.getHabitTypeByValue(value)
     }
 }
 

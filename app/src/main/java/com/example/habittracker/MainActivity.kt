@@ -45,8 +45,11 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, conf)
         binding.navView.setupWithNavController(navController)
 
-        val userIcon = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon)
+        loadIcon()
+    }
 
+    private fun loadIcon() {
+        val userIcon = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.userIcon)
         Glide.with(this)
             .load("https://www.boredpanda.com/blog/wp-content/uploads/2015/06/pallas-cat-manul-10__880.jpg")
             .placeholder(R.drawable.user_icon_placeholder)

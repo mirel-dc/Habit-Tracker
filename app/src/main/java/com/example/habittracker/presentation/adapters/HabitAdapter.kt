@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habittracker.R
 import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitPriority
+import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.databinding.ItemHabitatDataBinding
 
 class HabitAdapter(
@@ -39,10 +41,13 @@ class HabitAdapter(
         fun bind(habitEntity: HabitEntity) = with(binding) {
             tvHabitName.text = habitEntity.name
             tvHabitDescription.text = habitEntity.description
-            tvHabitType.text = context.getString(habitEntity.type.resId)
-            tvHabitFrequency.text = context.getString(R.string.week, habitEntity.frequency.toString())
+            tvHabitType.text =
+                context.getString(HabitType.getResourceIdByType(habitEntity.type))
+            tvHabitFrequency.text =
+                context.getString(R.string.week, habitEntity.frequency.toString())
             viewColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(habitEntity.color, 1f, 1f)))
-            tvHabitPriority.text = habitEntity.priority.toString()
+            tvHabitPriority.text =
+                context.getString(HabitPriority.getResourceIdByPriority(habitEntity.priority))
         }
     }
 }

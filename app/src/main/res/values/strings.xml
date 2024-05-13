@@ -39,6 +39,9 @@
     <string name="successfully_deleted_habit">Successfully deleted habit</string>
     <string name="undo">Undo</string>
     <string name="incorrectly_filled_fields">Incorrectly filled fields</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
     <!-- Navigation Item end -->
 
 

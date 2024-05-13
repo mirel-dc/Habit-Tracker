@@ -54,27 +54,32 @@
                 android:maxLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            style="@style/CasualTextStyle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/llPriority"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="@string/choose_priority"
-            app:layout_constraintBottom_toBottomOf="@+id/spPriority"
-            app:layout_constraintEnd_toStartOf="@+id/spPriority"
-            app:layout_constraintTop_toTopOf="@+id/spPriority" />
-
-        <Spinner
-            android:id="@+id/spPriority"
-            style="@style/CasualTextStyle"
-            android:layout_width="100dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginVertical="24dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/containerDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/containerDescription">
+
+            <TextView
+                style="@style/CasualTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="@string/choose_priority" />
+
+            <Spinner
+                android:id="@+id/spPriority"
+                style="@style/CasualTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+        </LinearLayout>
+
 
         <HorizontalScrollView
             android:id="@+id/hsvRadioGroup"
@@ -85,7 +90,7 @@
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spPriority">
+            app:layout_constraintTop_toBottomOf="@id/llPriority">
 
             <RadioGroup
                 android:id="@+id/rgHabitType"

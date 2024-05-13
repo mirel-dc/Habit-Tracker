@@ -1,6 +1,7 @@
 package com.example.habittracker.data.remote.dto
 
 import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitPriority
 import com.example.habittracker.data.local.entity.HabitType
 import com.google.gson.annotations.SerializedName
 import java.util.UUID
@@ -26,8 +27,8 @@ data class HabitDTO(
             editDate = editDate,
             name = name,
             description = description,
-            priority = priority,
-            type = HabitType.getFromApiId(type),
+            priority = HabitPriority.getHabitPriorityByValue(priority),
+            type = HabitType.getHabitTypeByValue(type),
             executionQuantity = executionQuantity,
             frequency = frequency,
             color = color.toFloat()

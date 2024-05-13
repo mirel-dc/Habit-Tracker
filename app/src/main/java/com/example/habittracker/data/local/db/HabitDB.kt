@@ -9,7 +9,7 @@ import com.example.habittracker.data.local.entity.HabitEntity
 
 @Database(
     entities = [HabitEntity::class],
-    version = 2,
+    version = 3,
 )
 @TypeConverters(HabitTypeConverter::class, UUIDConverter::class)
 abstract class HabitDB : RoomDatabase() {

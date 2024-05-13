@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.habittracker.R
 import com.example.habittracker.data.local.entity.HabitEntity
+import com.example.habittracker.data.local.entity.HabitPriority
 import com.example.habittracker.data.local.entity.HabitType
 import com.example.habittracker.data.repository.HabitRepository
 import kotlinx.coroutines.async
@@ -25,7 +26,10 @@ class CreateHabitViewModel(
 
     private var isUpdate = false
 
-    var priorities = arrayOf(1, 2, 3)
+    var priorities =
+        HabitPriority.entries.toTypedArray().map { habitPriority ->
+           HabitPriority.getResourceIdByPriority(habitPriority)
+        }
         private set
 
     private val _nameError = MutableLiveData<Int?>()
@@ -51,7 +55,7 @@ class CreateHabitViewModel(
         currentHabit.value = HabitEntity(
             name = "",
             description = "",
-            priority = 0,
+            priority = HabitPriority.HIGH,
             executionQuantity = 0,
             color = 0f,
             type = HabitType.GOOD,

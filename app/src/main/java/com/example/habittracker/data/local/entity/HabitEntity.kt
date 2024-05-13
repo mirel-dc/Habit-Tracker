@@ -16,7 +16,7 @@ data class HabitEntity(
     var editDate: Long = Calendar.getInstance().timeInMillis,
     var name: String,
     var description: String,
-    var priority: Int,
+    var priority: HabitPriority,
     var type: HabitType,
     var executionQuantity: Int,
     var frequency: Int,
@@ -28,8 +28,8 @@ data class HabitEntity(
             editDate = editDate,
             name = name,
             description = description,
-            priority = priority,
-            type = HabitType.getApiId(type.resId),
+            priority = priority.value,
+            type = type.value,
             executionQuantity = executionQuantity,
             frequency = frequency,
             color = color.toInt()
@@ -42,29 +42,46 @@ data class HabitEntity(
 }
 
 @Parcelize
-enum class HabitType(val resId: Int) : Parcelable {
-    GOOD(R.string.good_habit),
-    BAD(R.string.bad_habit);
+enum class HabitType(val value: Int) : Parcelable {
+    GOOD(0),
+    BAD(1);
 
     companion object {
-        fun getByResId(resId: Int): HabitType {
-            return when (resId) {
-                GOOD.resId -> GOOD
-                else -> BAD
+        fun getResourceIdByType(habitType: HabitType): Int {
+            return when (habitType) {
+                GOOD -> R.string.good_habit
+                BAD -> R.string.bad_habit
             }
         }
 
-        fun getApiId(resId: Int): Int {
-            return when (resId) {
-                GOOD.resId -> 0
-                else -> 1
-            }
-        }
-
-        fun getFromApiId(apiId: Int): HabitType {
-            return when (apiId) {
+        fun getHabitTypeByValue(value: Int): HabitType {
+            return when (value) {
                 0 -> GOOD
                 else -> BAD
+            }
+        }
+    }
+}
+
+enum class HabitPriority(val value: Int) {
+    HIGH(0),
+    MEDIUM(1),
+    LOW(2);
+
+    companion object {
+        fun getResourceIdByPriority(priority: HabitPriority): Int {
+            return when (priority) {
+                HIGH -> R.string.high
+                MEDIUM -> R.string.medium
+                LOW -> R.string.low
+            }
+        }
+
+        fun getHabitPriorityByValue(value: Int): HabitPriority {
+            return when (value) {
+                0 -> HIGH
+                1 -> MEDIUM
+                else -> LOW
             }
         }
     }

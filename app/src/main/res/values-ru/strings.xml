@@ -28,4 +28,7 @@
     <string name="successfully_deleted_habit">Привычка успешно удалена</string>
     <string name="undo">Отмена</string>
     <string name="incorrectly_filled_fields">Неправильно заполнены поля</string>
+    <string name="high">Высокий</string>
+    <string name="medium">Средний</string>
+    <string name="low">Низкий</string>
 </resources>

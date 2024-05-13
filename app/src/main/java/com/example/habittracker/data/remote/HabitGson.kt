@@ -29,21 +29,21 @@ class HabitTypeTypeAdapter : TypeAdapter<HabitType>() {
     override fun write(out: JsonWriter, value: HabitType?) {
         out.beginObject()
         if (value != null) {
-            out.name("type").value(value.resId)
+            out.name("type").value(value.value)
         }
         out.endObject()
     }
 
     override fun read(`in`: JsonReader): HabitType {
         `in`.beginObject()
-        var resId = 0
+        var value = 0
         while (`in`.hasNext()) {
             when (`in`.nextName()) {
-                "type" -> resId = `in`.nextInt()
+                "type" -> value = `in`.nextInt()
                 else -> `in`.skipValue()
             }
         }
         `in`.endObject()
-        return HabitType.getByResId(resId)
+        return HabitType.getHabitTypeByValue(value)
     }
 }
