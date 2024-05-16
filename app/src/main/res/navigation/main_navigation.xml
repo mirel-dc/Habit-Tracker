@@ -6,7 +6,7 @@
     app:startDestination="@id/mainHolderFragment">
     <fragment
         android:id="@+id/createHabitFragment"
-        android:name="com.example.habittracker.presentation.fragments.CreateHabitFragment"
+        android:name="com.example.presentation.fragments.CreateHabitFragment"
         android:label="@string/create_new_habit">
         <argument
             android:name="habitUUID"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/infoFragment"
-        android:name="com.example.habittracker.presentation.fragments.InfoFragment"
+        android:name="com.example.presentation.fragments.InfoFragment"
         android:label="@string/info"
         tools:layout="@layout/fragment_info">
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainHolderFragment"
-        android:name="com.example.habittracker.presentation.fragments.MainHolderFragment"
+        android:name="com.example.presentation.fragments.MainHolderFragment"
         android:label="@string/home"
         tools:layout="@layout/fragment_main_holder">
         <action

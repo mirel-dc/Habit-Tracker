@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Habit Tracker</string>
-    <!-- HabitType Descriptions start -->
+    <!-- com.example.domain.model.HabitType Descriptions start -->
     <string name="good_habit">Good</string>
     <string name="bad_habit">Bad</string>
-    <!-- HabitType Descriptions end -->
+    <!-- com.example.domain.model.HabitType Descriptions end -->
 
     <!-- Create Habit Page start -->
     <string name="habit_name">Habit name</string>
