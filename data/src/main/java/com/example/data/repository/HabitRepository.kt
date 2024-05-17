@@ -42,6 +42,7 @@ class HabitRepositoryImpl(
             if (habitUid.isSuccessful) {
                 dao.insert(habitEntity)
             }
+            //TODO fix ids
             importHabitsFromApi()
         }
 

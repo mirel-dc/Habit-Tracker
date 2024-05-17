@@ -1,5 +1,6 @@
 package com.example.data.remote
 
+import com.example.data.local.entity.HabitTypeEntity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
@@ -10,7 +11,7 @@ import java.util.UUID
 val gson: Gson = GsonBuilder()
     .setPrettyPrinting()
     .registerTypeAdapter(UUID::class.java, UUIDTypeAdapter())
-    .registerTypeAdapter(com.example.data.local.entity.HabitType::class.java, HabitTypeTypeAdapter())
+    .registerTypeAdapter(HabitTypeEntity::class.java, HabitTypeTypeAdapter())
     .create()
 
 class UUIDTypeAdapter : TypeAdapter<UUID>() {
@@ -24,8 +25,8 @@ class UUIDTypeAdapter : TypeAdapter<UUID>() {
     }
 }
 
-class HabitTypeTypeAdapter : TypeAdapter<com.example.data.local.entity.HabitType>() {
-    override fun write(out: JsonWriter, value: com.example.data.local.entity.HabitType?) {
+class HabitTypeTypeAdapter : TypeAdapter<HabitTypeEntity>() {
+    override fun write(out: JsonWriter, value: HabitTypeEntity?) {
         out.beginObject()
         if (value != null) {
             out.name("type").value(value.value)
@@ -33,7 +34,7 @@ class HabitTypeTypeAdapter : TypeAdapter<com.example.data.local.entity.HabitType
         out.endObject()
     }
 
-    override fun read(`in`: JsonReader): com.example.data.local.entity.HabitType {
+    override fun read(`in`: JsonReader): HabitTypeEntity {
         `in`.beginObject()
         var value = 0
         while (`in`.hasNext()) {
@@ -43,6 +44,6 @@ class HabitTypeTypeAdapter : TypeAdapter<com.example.data.local.entity.HabitType
             }
         }
         `in`.endObject()
-        return com.example.data.local.entity.HabitType.getHabitTypeByValue(value)
+        return HabitTypeEntity.getHabitTypeByValue(value)
     }
 }

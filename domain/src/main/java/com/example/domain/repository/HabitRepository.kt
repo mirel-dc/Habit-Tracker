@@ -11,4 +11,6 @@ interface HabitRepository {
     fun updateHabit(habit: Habit)
 
     fun getHabitById(uuid : String) : Habit
+
+    fun deleteHabit(habit : Habit)
 }
