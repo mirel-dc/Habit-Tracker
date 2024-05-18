@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs")
 }
 
 android {
@@ -35,6 +36,14 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
+
+    //Presentation architecture
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+
+    //Navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")

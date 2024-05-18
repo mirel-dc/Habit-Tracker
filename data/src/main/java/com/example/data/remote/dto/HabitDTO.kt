@@ -1,8 +1,9 @@
 package com.example.data.remote.dto
 
 import com.example.data.local.entity.HabitEntity
-import com.example.data.local.entity.HabitPriority
-import com.example.data.local.entity.HabitType
+import com.example.domain.model.Habit
+import com.example.domain.model.HabitPriority
+import com.example.domain.model.HabitType
 import com.google.gson.annotations.SerializedName
 import java.util.UUID
 
@@ -21,14 +22,28 @@ data class HabitDTO(
     var frequency: Int,
     var color: Int,
 ) {
-    fun toHabitEntity(): com.example.data.local.entity.HabitEntity {
-        return com.example.data.local.entity.HabitEntity(
+//    fun toHabit(): Habit {
+//        return Habit(
+//            id = id,
+//            editDate = editDate,
+//            name = name,
+//            description = description,
+//            priority = HabitPriority.fromValue(priority),
+//            type = HabitType.fromValue(type),
+//            executionQuantity = executionQuantity,
+//            frequency = frequency,
+//            color = color.toFloat(),
+//        )
+//    }
+
+    fun toHabitEntity(): HabitEntity {
+        return HabitEntity(
             id = UUID.fromString(id),
             editDate = editDate,
             name = name,
             description = description,
-            priority = com.example.data.local.entity.HabitPriority.getHabitPriorityByValue(priority),
-            type = com.example.data.local.entity.HabitType.getHabitTypeByValue(type),
+            priority = HabitPriority.fromValue(priority),
+            type = HabitType.fromValue(type),
             executionQuantity = executionQuantity,
             frequency = frequency,
             color = color.toFloat()

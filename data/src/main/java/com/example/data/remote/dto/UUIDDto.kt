@@ -6,8 +6,12 @@ class UUIDDto(
     val uid: UUID? = null
 ) {
     companion object {
-        fun UUIDtoUUIDDto(uuid: UUID): UUIDDto {
+        fun uUIDtoUUIDDto(uuid: UUID): UUIDDto {
             return UUIDDto(uid = uuid)
+        }
+
+        fun stringToUUIDDto(string: String): UUIDDto {
+            return UUIDDto(uid = UUID.fromString(string))
         }
     }
 }

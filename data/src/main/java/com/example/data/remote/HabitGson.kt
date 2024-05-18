@@ -1,6 +1,5 @@
 package com.example.data.remote
 
-import com.example.data.local.entity.HabitTypeEntity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.TypeAdapter
@@ -11,7 +10,7 @@ import java.util.UUID
 val gson: Gson = GsonBuilder()
     .setPrettyPrinting()
     .registerTypeAdapter(UUID::class.java, UUIDTypeAdapter())
-    .registerTypeAdapter(HabitTypeEntity::class.java, HabitTypeTypeAdapter())
+    // .registerTypeAdapter(HabitTypeTypeAdapter::class.java, HabitTypeTypeAdapter())
     .create()
 
 class UUIDTypeAdapter : TypeAdapter<UUID>() {
@@ -25,25 +24,25 @@ class UUIDTypeAdapter : TypeAdapter<UUID>() {
     }
 }
 
-class HabitTypeTypeAdapter : TypeAdapter<HabitTypeEntity>() {
-    override fun write(out: JsonWriter, value: HabitTypeEntity?) {
-        out.beginObject()
-        if (value != null) {
-            out.name("type").value(value.value)
-        }
-        out.endObject()
-    }
-
-    override fun read(`in`: JsonReader): HabitTypeEntity {
-        `in`.beginObject()
-        var value = 0
-        while (`in`.hasNext()) {
-            when (`in`.nextName()) {
-                "type" -> value = `in`.nextInt()
-                else -> `in`.skipValue()
-            }
-        }
-        `in`.endObject()
-        return HabitTypeEntity.getHabitTypeByValue(value)
-    }
-}
+//class HabitTypeTypeAdapter : TypeAdapter<HabitType>() {
+//    override fun write(out: JsonWriter, value: HabitType?) {
+//        out.beginObject()
+//        if (value != null) {
+//            out.name("type").value(value.value)
+//        }
+//        out.endObject()
+//    }
+//
+//    override fun read(`in`: JsonReader): HabitType {
+//        `in`.beginObject()
+//        var value = 0
+//        while (`in`.hasNext()) {
+//            when (`in`.nextName()) {
+//                "type" -> value = `in`.nextInt()
+//                else -> `in`.skipValue()
+//            }
+//        }
+//        `in`.endObject()
+//        return HabitType.getHabitTypeByValue(value)
+//    }
+//}
