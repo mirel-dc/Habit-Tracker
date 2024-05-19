@@ -8,8 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.example.domain.model.HabitType
-import com.example.habittracker.databinding.FragmentMainHolderBinding
 import com.example.presentation.adapters.TypeFragmentAdapter
+import com.example.presentation.databinding.FragmentMainHolderBinding
+import com.example.presentation.utils.GetResIdFromEnum
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainHolderFragment : Fragment() {
@@ -46,17 +47,12 @@ class MainHolderFragment : Fragment() {
             binding.habitTypeViewPager2
         ) { tab, position ->
             when (position) {
-                0 -> tab.text =
-                    getString(
-                        HabitType.getResourceIdByType(
-                            HabitType.getHabitTypeByValue(position)
-                        )
-                    )
+                0 -> tab.text = getString(
+                    GetResIdFromEnum.fromType(HabitType.fromValue(position))
+                )
 
                 1 -> tab.text = getString(
-                    HabitType.getResourceIdByType(
-                        HabitType.getHabitTypeByValue(position)
-                    )
+                    GetResIdFromEnum.fromType(HabitType.fromValue(position))
                 )
             }
         }.attach()

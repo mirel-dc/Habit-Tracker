@@ -1,5 +1,6 @@
 package com.example.presentation.fragments
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -13,26 +14,24 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.data.local.entity.HabitEntity
+import com.example.domain.model.HabitPriority
 import com.example.domain.model.HabitType
-import com.example.habittracker.R
-import com.example.habittracker.data.local.db.HabitDB
-import com.example.habittracker.data.local.entity.HabitEntity
-import com.example.habittracker.data.local.entity.HabitPriority
-import com.example.habittracker.data.repository.HabitRepository
-import com.example.habittracker.databinding.FragmentCreateHabitBinding
+import com.example.presentation.R
+import com.example.presentation.databinding.FragmentCreateHabitBinding
+import com.example.presentation.di.PresentationComponentProvider
 import com.example.presentation.viewmodels.CreateHabitViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 private const val TAG = "CreateHabitFragment"
 
@@ -44,15 +43,21 @@ class CreateHabitFragment : Fragment() {
             ?: throw IllegalStateException("Binding for FragmentCreateHabit must not be null")
 
 
-    private val viewModel: CreateHabitViewModel by activityViewModels {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return CreateHabitViewModel(HabitRepository(HabitDB(requireContext()))) as T
-            }
-        }
-    }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: CreateHabitViewModel
+
     private val args: CreateHabitFragmentArgs by navArgs()
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        (requireActivity().application as PresentationComponentProvider).provideAppComponent()
+            .inject(this)
+
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(CreateHabitViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -72,7 +77,7 @@ class CreateHabitFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Set chosen RV item's data into View Model
-        if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID)
+        if (args.habitUUID != null) viewModel.setCurrentHabitWithUUID(args.habitUUID.toString())
         else viewModel.emptyCurrentHabit()
 
         createColorBlock()
@@ -161,7 +166,7 @@ class CreateHabitFragment : Fragment() {
                 id: Long
             ) {
                 viewModel.currentHabit.value?.priority =
-                    HabitPriority.getHabitPriorityByValue(position)
+                    HabitPriority.fromValue(position)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}

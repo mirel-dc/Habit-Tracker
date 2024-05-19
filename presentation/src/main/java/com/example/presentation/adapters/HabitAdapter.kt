@@ -7,11 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.habittracker.R
 import com.example.data.local.entity.HabitEntity
-import com.example.data.local.entity.HabitPriority
-import com.example.data.local.entity.HabitType
-import com.example.habittracker.databinding.ItemHabitatDataBinding
+import com.example.presentation.R
+import com.example.presentation.databinding.ItemHabitatDataBinding
+import com.example.presentation.utils.GetResIdFromEnum
 
 class HabitAdapter(
     context: Context,
@@ -42,12 +41,12 @@ class HabitAdapter(
             tvHabitName.text = habitEntity.name
             tvHabitDescription.text = habitEntity.description
             tvHabitType.text =
-                context.getString(HabitType.getResourceIdByType(habitEntity.type))
+                context.getString(GetResIdFromEnum.fromType(habitEntity.type))
             tvHabitFrequency.text =
                 context.getString(R.string.week, habitEntity.frequency.toString())
             viewColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(habitEntity.color, 1f, 1f)))
             tvHabitPriority.text =
-                context.getString(HabitPriority.getResourceIdByPriority(habitEntity.priority))
+                context.getString(GetResIdFromEnum.fromPriority(habitEntity.priority))
         }
     }
 }
@@ -55,6 +54,7 @@ class HabitAdapter(
 interface OnRecyclerItemClicked {
     fun onRVItemClicked(habitEntity: HabitEntity)
 }
+
 
 private val RecyclerView.ViewHolder.context
     get() = this.itemView.context

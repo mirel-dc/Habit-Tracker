@@ -22,7 +22,9 @@ class HabitRepositoryImpl(
 ) : HabitRepository {
 
     override fun getHabits(): Flow<List<Habit>> = dao.getAllHabits().map { habits ->
-        habits.map { it.toHabit() }
+        habits.map { habit ->
+            habit.toHabit()
+        }
     }
 
     override suspend fun importHabits() {

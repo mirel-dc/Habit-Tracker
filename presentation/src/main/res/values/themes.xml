@@ -1,9 +1,9 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.HabitTracker" parent="Theme.Material3.Light">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-        <item name="android:statusBarColor"> @color/casualTextColor</item>
+        <item name="android:statusBarColor">@color/casualTextColor</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
     </style>

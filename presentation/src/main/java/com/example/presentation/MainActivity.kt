@@ -1,4 +1,4 @@
-package com.example.habittracker
+package com.example.presentation
 
 import android.os.Bundle
 import android.widget.ImageView
@@ -11,9 +11,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.example.habittracker.databinding.ActivityMainBinding
-
-private const val TAG = "MainActivity"
+import com.example.presentation.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

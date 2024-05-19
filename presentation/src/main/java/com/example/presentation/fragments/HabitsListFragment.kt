@@ -1,29 +1,28 @@
 package com.example.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.habittracker.R
-import com.example.habittracker.data.local.db.HabitDB
-import com.example.habittracker.data.local.entity.HabitEntity
-import com.example.habittracker.data.local.entity.HabitType
-import com.example.habittracker.data.repository.HabitRepository
-import com.example.habittracker.databinding.FragmentHabitsListBinding
+import com.example.data.local.entity.HabitEntity
+import com.example.domain.model.HabitType
+import com.example.presentation.R
 import com.example.presentation.adapters.HabitAdapter
 import com.example.presentation.adapters.OnRecyclerItemClicked
+import com.example.presentation.databinding.FragmentHabitsListBinding
+import com.example.presentation.di.PresentationComponentProvider
 import com.example.presentation.utils.SpacingItemDecorator
-import com.example.presentation.utils.parcelable
 import com.example.presentation.viewmodels.HabitListViewModel
-import com.example.presentation.viewmodels.factory.HabitListViewModelFactory
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 private const val TAG = "HabitListFragment"
 
@@ -38,11 +37,21 @@ class HabitsListFragment : Fragment() {
     private val adapter
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
 
-    private val viewModel: HabitListViewModel by activityViewModels {
-        HabitListViewModelFactory(HabitRepository(HabitDB(requireContext())))
-    }
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: HabitListViewModel
+
     private lateinit var habitType: HabitType
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        (requireActivity().application as PresentationComponentProvider).provideAppComponent()
+            .inject(this)
+
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(HabitListViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,8 +73,10 @@ class HabitsListFragment : Fragment() {
 
         //Habit type for viewPager
         arguments?.takeIf { it.containsKey(PARAM_TYPE) }?.apply {
-            habitType = parcelable(PARAM_TYPE)!!
+            habitType = HabitType.fromValue(this.getInt(PARAM_TYPE))
         }
+
+        //Log.d(TAG, arguments?.takeIf { it.containsKey(PARAM_TYPE) }.toString())
 
         initRecyclerView()
         initViewModelObservers()
@@ -156,7 +167,7 @@ class HabitsListFragment : Fragment() {
         fun newInstance(habitType: HabitType): HabitsListFragment {
             val fragment = HabitsListFragment()
             val args = Bundle()
-            args.putParcelable(PARAM_TYPE, habitType)
+            args.putInt(PARAM_TYPE, habitType.value)
             fragment.arguments = args
             return fragment
         }

@@ -3,17 +3,32 @@ package com.example.presentation.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.example.habittracker.data.local.entity.HabitEntity
-import com.example.habittracker.data.local.entity.HabitType
-import com.example.habittracker.data.repository.HabitRepository
+import com.example.data.local.entity.HabitEntity
+import com.example.data.remote.dto.Mapper
+import com.example.domain.model.HabitType
+import com.example.domain.use_case.DeleteHabitUseCase
+import com.example.domain.use_case.GetHabitsUseCase
+import com.example.domain.use_case.ImportHabitsUseCase
+import com.example.domain.use_case.InsertHabitUseCase
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HabitListViewModel(
-    private val habitRepository: HabitRepository
+class HabitListViewModel @Inject constructor(
+    private val deleteHabitUseCase: DeleteHabitUseCase,
+    private val getHabitsUseCase: GetHabitsUseCase,
+    private val insertHabitUseCase: InsertHabitUseCase,
+    private val importHabitsUseCase: ImportHabitsUseCase,
 ) : ViewModel() {
 
-    var habitsLiveData: LiveData<List<HabitEntity>> = habitRepository.getAllHabits()
+    var habitsLiveData: LiveData<List<HabitEntity>> =
+        getHabitsUseCase().asLiveData().map { habits ->
+            habits.map { habit ->
+                Mapper.fromHabitToHabitEntity(habit)
+            }
+        }
 
     private var currentList: List<HabitEntity> = listOf()
 
@@ -44,7 +59,8 @@ class HabitListViewModel(
 
     private fun importHabitsFromApi() {
         viewModelScope.launch {
-            habitRepository.importHabitsFromApi()
+            importHabitsUseCase()
+            //habitRepository.importHabitsFromApi()
         }
     }
 
@@ -53,11 +69,13 @@ class HabitListViewModel(
     }
 
     fun deleteHabit(habitEntity: HabitEntity) = viewModelScope.launch {
-        habitRepository.deleteHabit(habitEntity)
+        deleteHabitUseCase(habitEntity.toHabit())
+        //habitRepository.deleteHabit(habitEntity)
     }
 
     fun createHabit(habitEntity: HabitEntity) = viewModelScope.launch {
-        habitRepository.insertHabit(habitEntity)
+        insertHabitUseCase(habitEntity.toHabit())
+        //habitRepository.insertHabit(habitEntity)
     }
 
     fun filterByAsc() {

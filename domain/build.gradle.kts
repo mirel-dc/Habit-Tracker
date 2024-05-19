@@ -37,5 +37,5 @@ dependencies {
     api("javax.inject:javax.inject:1")
 
     // Kotlin Coroutines
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }

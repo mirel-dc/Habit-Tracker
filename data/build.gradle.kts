@@ -48,13 +48,14 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
 
+    //Dagger
+    implementation("com.google.dagger:dagger:2.51.1")
+    kapt("com.google.dagger:dagger-compiler:2.51.1")
+    implementation("javax.inject:javax.inject:1")
+
     //Network
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-
-    //TODO ??
-    //    implementation("com.github.bumptech.glide:glide:4.16.0")
-    //    implementation("jp.wasabeef:glide-transformations:4.3.0")
 }

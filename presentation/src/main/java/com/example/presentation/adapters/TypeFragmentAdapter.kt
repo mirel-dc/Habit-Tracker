@@ -5,7 +5,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.domain.model.HabitType
 import com.example.presentation.fragments.HabitsListFragment
 
-//convert to fragment
 class TypeFragmentAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = HabitType.entries.size
 

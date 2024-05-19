@@ -1,20 +1,20 @@
 package com.example.presentation.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.activityViewModels
-import com.example.habittracker.R
-import com.example.habittracker.data.local.db.HabitDB
-import com.example.habittracker.data.repository.HabitRepository
-import com.example.habittracker.databinding.BottomSheetBinding
+import androidx.lifecycle.ViewModelProvider
+import com.example.presentation.R
+import com.example.presentation.databinding.BottomSheetBinding
+import com.example.presentation.di.PresentationComponentProvider
 import com.example.presentation.viewmodels.HabitListViewModel
-import com.example.presentation.viewmodels.factory.HabitListViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import javax.inject.Inject
 
 class BottomSheetFilterFragment : BottomSheetDialogFragment() {
 
@@ -23,8 +23,19 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment() {
         get() = _binding
             ?: throw IllegalStateException("Binding for BottomSheetFilterFragment must not be null")
 
-    private val viewModel: HabitListViewModel by activityViewModels {
-        HabitListViewModelFactory(HabitRepository(HabitDB(requireContext())))
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private lateinit var viewModel: HabitListViewModel
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        (requireActivity().application as PresentationComponentProvider).provideAppComponent()
+            .inject(this)
+
+        viewModel =
+            ViewModelProvider(this, viewModelFactory).get(HabitListViewModel::class.java)
     }
 
 

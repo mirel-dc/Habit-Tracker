@@ -5,21 +5,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.data.local.entity.HabitEntity
+import com.example.data.remote.dto.Mapper
+import com.example.domain.model.HabitPriority
 import com.example.domain.model.HabitType
-import com.example.habittracker.R
-import com.example.habittracker.data.local.entity.HabitEntity
-import com.example.habittracker.data.local.entity.HabitPriority
-import com.example.habittracker.data.repository.HabitRepository
+import com.example.domain.use_case.GetHabitByIdUseCase
+import com.example.domain.use_case.InsertHabitUseCase
+import com.example.domain.use_case.UpdateHabitUseCase
+import com.example.presentation.R
+import com.example.presentation.utils.GetResIdFromEnum
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.util.UUID
+import javax.inject.Inject
 
 private const val TAG = "CreateHabitViewModel"
 
-class CreateHabitViewModel(
-    private val habitRepository: HabitRepository
+class CreateHabitViewModel @Inject constructor(
+    private val insertHabitUseCase: InsertHabitUseCase,
+    private val getHabitByIdUseCase: GetHabitByIdUseCase,
+    private val updateHabitUseCase: UpdateHabitUseCase
 ) : ViewModel() {
     var currentHabit = MutableLiveData<HabitEntity>()
         private set
@@ -28,7 +34,7 @@ class CreateHabitViewModel(
 
     var priorities =
         HabitPriority.entries.toTypedArray().map { habitPriority ->
-           HabitPriority.getResourceIdByPriority(habitPriority)
+            GetResIdFromEnum.fromPriority(habitPriority)
         }
         private set
 
@@ -84,7 +90,8 @@ class CreateHabitViewModel(
     private fun createHabit() = viewModelScope.launch {
         currentHabit.value.let {
             if (it != null) {
-                habitRepository.insertHabit(it)
+                insertHabitUseCase(it.toHabit())
+                //habitRepository.insertHabit(it)
             }
         }
     }
@@ -92,14 +99,18 @@ class CreateHabitViewModel(
     private fun updateHabit() = viewModelScope.launch {
         currentHabit.value.let {
             if (it != null) {
-                habitRepository.updateHabit(it)
+                updateHabitUseCase(it.toHabit())
+                //habitRepository.updateHabit(it)
             }
         }
     }
 
-    fun setCurrentHabitWithUUID(habitUUID: String?) = viewModelScope.launch {
-        val habit = async { habitRepository.getHabitById(UUID.fromString(habitUUID)) }
-        currentHabit.value = habit.await()
+    fun setCurrentHabitWithUUID(habitUUID: String) = viewModelScope.launch {
+        val habit = async {
+            getHabitByIdUseCase(habitUUID)
+            //habitRepository.getHabitById(UUID.fromString(habitUUID))
+        }
+        currentHabit.value = Mapper.fromHabitToHabitEntity(habit.await())
         isUpdate = true
         initValidationErrors()
     }
