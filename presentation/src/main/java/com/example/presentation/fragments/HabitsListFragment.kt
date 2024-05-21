@@ -59,7 +59,6 @@ class HabitsListFragment : Fragment() {
         }
     }
 
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HabitListViewModel
@@ -72,8 +71,13 @@ class HabitsListFragment : Fragment() {
         (requireActivity().application as PresentationComponentProvider).provideAppComponent()
             .inject(this)
 
+        //Using parent fragment as viewModelStoreOwner
+        //so it can correctly work with BottomSheetFilterFragment, cz they need 1 instance of VM
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(HabitListViewModel::class.java)
+            ViewModelProvider(
+                requireParentFragment(),
+                viewModelFactory
+            ).get(HabitListViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -98,8 +102,6 @@ class HabitsListFragment : Fragment() {
         arguments?.takeIf { it.containsKey(PARAM_TYPE) }?.apply {
             habitType = HabitType.fromValue(this.getInt(PARAM_TYPE))
         }
-
-        //Log.d(TAG, arguments?.takeIf { it.containsKey(PARAM_TYPE) }.toString())
 
         initRecyclerView()
         initViewModelObservers()
@@ -126,7 +128,7 @@ class HabitsListFragment : Fragment() {
                     viewModel.toastFlow.collectLatest {
                         Toast.makeText(
                             requireContext(),
-                            it, //resources.getString(it),
+                            resources.getString(it),
                             Toast.LENGTH_SHORT
                         ).show()
                     }

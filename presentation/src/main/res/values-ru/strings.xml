@@ -31,4 +31,8 @@
     <string name="high">Высокий</string>
     <string name="medium">Средний</string>
     <string name="low">Низкий</string>
+    <string name="great_job_keep_doing_it">Отлично. Продолжай в том же духе!</string>
+    <string name="you_are_breathtaking">You are Breathtaking!</string>
+    <string name="stop_doing_it">Переставай делать это</string>
+    <string name="no_more">Хватит это делать!</string>
 </resources>

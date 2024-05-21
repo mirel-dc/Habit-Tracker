@@ -1,8 +1,7 @@
 package com.example.data.di
 
-import com.example.data.remote.utils.RetrofitUtils
 import com.example.data.remote.HabitApi
-import com.example.data.remote.gson
+import com.example.data.remote.utils.RetrofitUtils
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -17,7 +16,7 @@ class NetworkModule {
         return Retrofit.Builder()
             .baseUrl(RetrofitUtils.BASE_URL)
             .client(RetrofitUtils.okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create(RetrofitUtils.gson))
             .build()
     }
 

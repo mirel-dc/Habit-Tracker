@@ -11,9 +11,11 @@ import com.example.data.remote.dto.Mapper
 import com.example.domain.model.HabitType
 import com.example.domain.use_case.CompleteHabitUseCase
 import com.example.domain.use_case.DeleteHabitUseCase
+import com.example.domain.use_case.FilterAndSearchHabitsUseCase
 import com.example.domain.use_case.GetHabitsUseCase
 import com.example.domain.use_case.ImportHabitsUseCase
 import com.example.domain.use_case.InsertHabitUseCase
+import com.example.presentation.utils.GetResIdFromEnum
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -28,6 +30,7 @@ class HabitListViewModel @Inject constructor(
     private val insertHabitUseCase: InsertHabitUseCase,
     private val importHabitsUseCase: ImportHabitsUseCase,
     private val completeHabitUseCase: CompleteHabitUseCase,
+    private val filterAndSearchHabitsUseCase: FilterAndSearchHabitsUseCase,
 ) : ViewModel() {
 
     var habitsLiveData: LiveData<List<HabitEntity>> =
@@ -45,7 +48,7 @@ class HabitListViewModel @Inject constructor(
     private val _searchNameLiveData: MutableLiveData<String> = MutableLiveData()
     val searchNameLiveData: LiveData<String> = _searchNameLiveData
 
-    private val toastChannel = Channel<String>()
+    private val toastChannel = Channel<Int>()
     val toastFlow = toastChannel.receiveAsFlow()
 
     init {
@@ -55,27 +58,24 @@ class HabitListViewModel @Inject constructor(
     }
 
     fun getHabitsByType(habitType: HabitType): List<HabitEntity> {
-        val list = currentList.filter { it.type == habitType }
         val searchString = searchNameLiveData.value.toString().trim()
 
-        return if (_filterByLiveData.value == true) {
-            list.sortedBy { it.editDate }
-                .filter { it.name.lowercase().contains(searchString.lowercase()) }
-        } else {
-            list.sortedByDescending { it.editDate }
-                .filter { it.name.lowercase().contains(searchString.lowercase()) }
-        }
+        return filterAndSearchHabitsUseCase.filterAndSearch(
+            habits = currentList.map { it.toHabit() },
+            habitType = habitType,
+            searchString = searchString,
+            isAsc = (_filterByLiveData.value == true)
+        ).map { Mapper.fromHabitToHabitEntity(it) }
     }
 
 
     fun btnCompleteClicked(habitEntity: HabitEntity) {
         val job = viewModelScope.launch {
             completeHabitUseCase(habitEntity.toHabit())
-                .collectLatest { result ->
-                    toastChannel.send(result)
+                .collectLatest { habitCountState ->
+                    toastChannel.send(GetResIdFromEnum.fromHabitCountState(habitCountState))
                 }
         }
-        //toastChannel.send(job)
     }
 
     private fun importHabitsFromApi() {

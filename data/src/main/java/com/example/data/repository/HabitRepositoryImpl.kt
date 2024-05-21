@@ -1,12 +1,13 @@
 package com.example.data.repository
 
-import android.util.Log
 import com.example.data.local.db.HabitDao
 import com.example.data.remote.HabitApi
 import com.example.data.remote.dto.Mapper
 import com.example.data.remote.dto.UUIDDto
 import com.example.data.remote.utils.retryIO
 import com.example.domain.model.Habit
+import com.example.domain.model.HabitCountState
+import com.example.domain.model.HabitType
 import com.example.domain.repository.HabitRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,25 +24,36 @@ class HabitRepositoryImpl(
     private val dao: HabitDao
 ) : HabitRepository {
 
-    override fun completeHabit(habit: Habit): Flow<String> = flow {
-        updateHabit(habit.copy(executionQuantity = habit.executionQuantity++))
-        val donehabitdto = Mapper.fromHabitToDoneHabitDto(habit)
-        Log.d(TAG, donehabitdto.toString())
-        api.doneHabit(donehabitdto)
-//        val habitEntity = Mapper.fromHabitToHabitEntity(habit)
-//
-//        when (habitEntity.type) {
-//            HabitType.GOOD -> {
-//
-//            }
-//
-//            HabitType.BAD -> {
-//
-//            }
-//        }
-//
-//        emit(habitEntity.toString())
+    override fun completeHabit(habit: Habit): Flow<HabitCountState> = flow {
+        val maxCount = habit.frequency
+        val currentCount = habit.executionQuantity + 1
+
+        //Increase count by 1
+        updateHabit(habit.copy(executionQuantity = habit.executionQuantity + 1))
+
+        when (habit.type) {
+            HabitType.GOOD -> {
+                if (currentCount < maxCount) {
+                    emit(HabitCountState.KEEP_DOING)
+                } else {
+                    emit(HabitCountState.URE_BREATHTAKING)
+                }
+            }
+
+            HabitType.BAD -> {
+                if (currentCount < maxCount) {
+                    emit(HabitCountState.STOP_IT)
+                } else {
+                    emit(HabitCountState.NO_MORE)
+                }
+            }
+        }
+
+        //Пока просто закидываю done-date на сервер, не придумал как использовать их лучше всего
+        //Mapper установит текущую дату (в милисек) и uid привычки
+        api.doneHabit(Mapper.fromHabitToDoneHabitDto(habit))
     }
+
 
     override fun getHabits(): Flow<List<Habit>> = dao.getAllHabits().map { habits ->
         habits.map { habit ->

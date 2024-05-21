@@ -1,5 +1,7 @@
 package com.example.data.remote.utils
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,4 +28,8 @@ object RetrofitUtils {
         .addInterceptor(loggingInterceptor)
         .addInterceptor(tokenInterceptor)
         .build()
+
+    val gson: Gson = GsonBuilder()
+        .setPrettyPrinting()
+        .create()
 }

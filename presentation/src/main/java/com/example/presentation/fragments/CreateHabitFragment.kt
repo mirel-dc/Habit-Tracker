@@ -56,7 +56,10 @@ class CreateHabitFragment : Fragment() {
             .inject(this)
 
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(CreateHabitViewModel::class.java)
+            ViewModelProvider(
+                requireParentFragment(),
+                viewModelFactory
+            ).get(CreateHabitViewModel::class.java)
     }
 
     override fun onCreateView(

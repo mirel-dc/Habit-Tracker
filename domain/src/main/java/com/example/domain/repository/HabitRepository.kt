@@ -1,6 +1,7 @@
 package com.example.domain.repository
 
 import com.example.domain.model.Habit
+import com.example.domain.model.HabitCountState
 import kotlinx.coroutines.flow.Flow
 
 interface HabitRepository {
@@ -16,5 +17,5 @@ interface HabitRepository {
 
     suspend fun deleteHabit(habit: Habit)
 
-    fun completeHabit(habit: Habit): Flow<String>
+    fun completeHabit(habit: Habit): Flow<HabitCountState>
 }

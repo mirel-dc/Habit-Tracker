@@ -19,6 +19,7 @@ object Mapper {
             executionQuantity = habit.executionQuantity,
             frequency = habit.frequency,
             color = habit.color,
+            doneDates = habit.doneDates
         )
     }
 
@@ -33,6 +34,7 @@ object Mapper {
             executionQuantity = habit.executionQuantity,
             frequency = habit.frequency,
             color = habit.color.toInt(),
+            doneDates = habit.doneDates
         )
     }
 

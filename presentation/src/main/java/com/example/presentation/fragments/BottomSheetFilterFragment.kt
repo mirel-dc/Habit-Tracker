@@ -27,15 +27,19 @@ class BottomSheetFilterFragment : BottomSheetDialogFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private lateinit var viewModel: HabitListViewModel
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
         (requireActivity().application as PresentationComponentProvider).provideAppComponent()
             .inject(this)
 
+        //Using parent fragment as viewModelStoreOwner
+        //so it can correctly work with HabitsListFragment, cz they need 1 instance of VM
         viewModel =
-            ViewModelProvider(this, viewModelFactory).get(HabitListViewModel::class.java)
+            ViewModelProvider(
+                requireParentFragment(),
+                viewModelFactory
+            ).get(HabitListViewModel::class.java)
     }
 
 

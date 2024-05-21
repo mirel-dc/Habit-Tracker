@@ -42,6 +42,10 @@
     <string name="high">High</string>
     <string name="medium">Medium</string>
     <string name="low">Low</string>
+    <string name="great_job_keep_doing_it">Great job! Keep doing it!</string>
+    <string name="you_are_breathtaking">You are Breathtaking!</string>
+    <string name="stop_doing_it">Stop doing it</string>
+    <string name="no_more">No more!</string>
     <!-- Navigation Item end -->
 
 

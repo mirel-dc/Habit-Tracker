@@ -10,4 +10,5 @@ data class Habit(
     var executionQuantity: Int,
     var frequency: Int,
     var color: Float,
+    val doneDates: List<Long>
 )

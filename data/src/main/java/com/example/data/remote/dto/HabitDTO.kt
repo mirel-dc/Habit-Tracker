@@ -33,7 +33,8 @@ data class HabitDTO(
             type = HabitType.fromValue(type),
             executionQuantity = executionQuantity,
             frequency = frequency,
-            color = color.toFloat()
+            color = color.toFloat(),
+            doneDates = doneDates
         )
     }
 }

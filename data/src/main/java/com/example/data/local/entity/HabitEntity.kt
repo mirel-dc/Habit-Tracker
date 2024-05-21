@@ -49,6 +49,7 @@ data class HabitEntity(
             executionQuantity = executionQuantity,
             frequency = frequency,
             color = color,
+            doneDates = doneDates
         )
     }
 

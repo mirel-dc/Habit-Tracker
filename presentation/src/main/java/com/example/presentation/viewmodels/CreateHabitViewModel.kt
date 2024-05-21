@@ -1,6 +1,5 @@
 package com.example.presentation.viewmodels
 
-import android.text.TextUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +11,7 @@ import com.example.domain.model.HabitType
 import com.example.domain.use_case.GetHabitByIdUseCase
 import com.example.domain.use_case.InsertHabitUseCase
 import com.example.domain.use_case.UpdateHabitUseCase
+import com.example.domain.use_case.ValidateHabitUseCase
 import com.example.presentation.R
 import com.example.presentation.utils.GetResIdFromEnum
 import kotlinx.coroutines.async
@@ -25,7 +25,8 @@ private const val TAG = "CreateHabitViewModel"
 class CreateHabitViewModel @Inject constructor(
     private val insertHabitUseCase: InsertHabitUseCase,
     private val getHabitByIdUseCase: GetHabitByIdUseCase,
-    private val updateHabitUseCase: UpdateHabitUseCase
+    private val updateHabitUseCase: UpdateHabitUseCase,
+    private val validateHabitUseCase: ValidateHabitUseCase,
 ) : ViewModel() {
     var currentHabit = MutableLiveData<HabitEntity>()
         private set
@@ -65,7 +66,8 @@ class CreateHabitViewModel @Inject constructor(
             executionQuantity = 0,
             color = 0f,
             type = HabitType.GOOD,
-            frequency = 0
+            frequency = 0,
+            doneDates = listOf()
         )
         isUpdate = false
     }
@@ -91,7 +93,6 @@ class CreateHabitViewModel @Inject constructor(
         currentHabit.value.let {
             if (it != null) {
                 insertHabitUseCase(it.toHabit())
-                //habitRepository.insertHabit(it)
             }
         }
     }
@@ -100,7 +101,6 @@ class CreateHabitViewModel @Inject constructor(
         currentHabit.value.let {
             if (it != null) {
                 updateHabitUseCase(it.toHabit())
-                //habitRepository.updateHabit(it)
             }
         }
     }
@@ -108,7 +108,6 @@ class CreateHabitViewModel @Inject constructor(
     fun setCurrentHabitWithUUID(habitUUID: String) = viewModelScope.launch {
         val habit = async {
             getHabitByIdUseCase(habitUUID)
-            //habitRepository.getHabitById(UUID.fromString(habitUUID))
         }
         currentHabit.value = Mapper.fromHabitToHabitEntity(habit.await())
         isUpdate = true
@@ -129,51 +128,43 @@ class CreateHabitViewModel @Inject constructor(
         }
     }
 
-    fun validateName(enteredName: String): Boolean {
-        return if (TextUtils.isEmpty(enteredName)) {
+
+    //Легко расширить и добавить различные ошибки
+    //например возвращать енам с состояниями, или использовать Resource
+    fun validateName(enteredName: String) {
+        if (!validateHabitUseCase.validateName(enteredName))
             _nameError.value = R.string.cannot_be_empty
-            false
-        } else {
+        else
             _nameError.value = null
-            true
-        }
     }
 
-    fun validateDescription(enteredName: String): Boolean {
-        return if (TextUtils.isEmpty(enteredName)) {
+    fun validateDescription(enteredDescription: String) {
+        if (!validateHabitUseCase.validateDescription(enteredDescription))
             _descriptionError.value = R.string.cannot_be_empty
-            false
-        } else {
+        else
             _descriptionError.value = null
-            true
-        }
     }
 
-    fun validateQuantity(enteredQuantity: String): Boolean {
-        return if (enteredQuantity == "") {
+    fun validateQuantity(enteredQuantity: String) {
+        if (!validateHabitUseCase.validateQuantity(enteredQuantity))
             _quantityError.value = R.string.cannot_be_empty
-            false
-        } else {
+        else
             _quantityError.value = null
-            true
-        }
     }
 
-    fun validateFrequency(enteredFrequency: String): Boolean {
-        return if (enteredFrequency == "") {
+    fun validateFrequency(enteredFrequency: String) {
+        if (!validateHabitUseCase.validateFrequency(enteredFrequency))
             _frequencyError.value = R.string.cannot_be_empty
-            false
-        } else {
+        else
             _frequencyError.value = null
-            true
-        }
     }
-
 
     private fun isValid(): Boolean {
-        return (validateFrequency(currentHabit.value?.frequency.toString())
-                && validateName(currentHabit.value?.name.toString())
-                && validateQuantity(currentHabit.value?.executionQuantity.toString())
-                && validateDescription(currentHabit.value?.description.toString()))
+        return (validateHabitUseCase.isValid(
+            name = currentHabit.value?.name.toString(),
+            frequency = currentHabit.value?.frequency.toString(),
+            quantity = currentHabit.value?.executionQuantity.toString(),
+            description = currentHabit.value?.description.toString(),
+        ))
     }
 }
