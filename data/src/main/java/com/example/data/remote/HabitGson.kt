@@ -9,10 +9,11 @@ import java.util.UUID
 
 val gson: Gson = GsonBuilder()
     .setPrettyPrinting()
-    .registerTypeAdapter(UUID::class.java, UUIDTypeAdapter())
+    //.registerTypeAdapter(UUID::class.java, UUIDTypeAdapter())
     // .registerTypeAdapter(HabitTypeTypeAdapter::class.java, HabitTypeTypeAdapter())
     .create()
 
+//TODO
 class UUIDTypeAdapter : TypeAdapter<UUID>() {
     override fun write(out: JsonWriter?, value: UUID?) {
         out?.value(value?.toString())

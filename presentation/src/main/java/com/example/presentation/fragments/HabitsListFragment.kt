@@ -6,8 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,12 +20,17 @@ import com.example.data.local.entity.HabitEntity
 import com.example.domain.model.HabitType
 import com.example.presentation.R
 import com.example.presentation.adapters.HabitAdapter
+import com.example.presentation.adapters.OnBtnCompleteClickListener
 import com.example.presentation.adapters.OnRecyclerItemClicked
 import com.example.presentation.databinding.FragmentHabitsListBinding
 import com.example.presentation.di.PresentationComponentProvider
 import com.example.presentation.utils.SpacingItemDecorator
 import com.example.presentation.viewmodels.HabitListViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val TAG = "HabitListFragment"
@@ -36,6 +45,20 @@ class HabitsListFragment : Fragment() {
     private var _adapter: HabitAdapter? = null
     private val adapter
         get() = _adapter ?: throw IllegalStateException("Adapter must not be null")
+
+    //rvItemOnClick
+    private val clickListener = object : OnRecyclerItemClicked {
+        override fun onRVItemClicked(habitEntity: HabitEntity) {
+            doOnRVItemClicked(habitEntity)
+        }
+    }
+
+    private val completeClickListener = object : OnBtnCompleteClickListener {
+        override fun onBtnCompleteClicked(habitEntity: HabitEntity) {
+            doOnBtnCompleteClicked(habitEntity)
+        }
+    }
+
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -96,11 +119,25 @@ class HabitsListFragment : Fragment() {
         viewModel.searchNameLiveData.observe(requireActivity()) {
             adapter.submitList(viewModel.getHabitsByType(habitType))
         }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                withContext(Dispatchers.Main) {
+                    viewModel.toastFlow.collectLatest {
+                        Toast.makeText(
+                            requireContext(),
+                            it, //resources.getString(it),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun initRecyclerView() {
         _adapter = context?.let {
-            HabitAdapter(it, clickListener)
+            HabitAdapter(it, clickListener, completeClickListener)
         }
 
         binding.rvHabit.adapter = adapter
@@ -148,17 +185,16 @@ class HabitsListFragment : Fragment() {
     }
 
 
-    //rvItemOnClick
-    private val clickListener = object : OnRecyclerItemClicked {
-        override fun onRVItemClicked(habitEntity: HabitEntity) {
-            doOnRVItemClicked(habitEntity)
-        }
-    }
-
+    //Click listeners
     private fun doOnRVItemClicked(habitEntity: HabitEntity) {
         val navAction =
             MainHolderFragmentDirections.actionMainHolderFragmentToCreateHabitFragment(habitEntity.id.toString())
         findNavController().navigate(navAction)
+    }
+
+
+    private fun doOnBtnCompleteClicked(habitEntity: HabitEntity) {
+        viewModel.btnCompleteClicked(habitEntity)
     }
 
     companion object {

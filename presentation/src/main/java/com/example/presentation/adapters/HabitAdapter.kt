@@ -15,12 +15,17 @@ import com.example.presentation.utils.GetResIdFromEnum
 class HabitAdapter(
     context: Context,
     private val clickListener: OnRecyclerItemClicked,
+    private val btnCompleteClick: OnBtnCompleteClickListener
 ) : ListAdapter<HabitEntity, HabitAdapter.ViewHolder>(HabitDiffItemCallback()) {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(inflater.inflate(R.layout.item_habitat_data, parent, false))
+        return ViewHolder(
+            inflater.inflate(
+                R.layout.item_habitat_data, parent, false,
+            ), btnCompleteClick = btnCompleteClick
+        )
     }
 
     override fun getItemCount(): Int = currentList.size
@@ -34,7 +39,10 @@ class HabitAdapter(
         }
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(
+        view: View,
+        private val btnCompleteClick: OnBtnCompleteClickListener
+    ) : RecyclerView.ViewHolder(view) {
         private val binding = ItemHabitatDataBinding.bind(view)
 
         fun bind(habitEntity: HabitEntity) = with(binding) {
@@ -47,12 +55,20 @@ class HabitAdapter(
             viewColor.setBackgroundColor(Color.HSVToColor(floatArrayOf(habitEntity.color, 1f, 1f)))
             tvHabitPriority.text =
                 context.getString(GetResIdFromEnum.fromPriority(habitEntity.priority))
+            //Todo Click listener
+            btnComplete.setOnClickListener {
+                btnCompleteClick.onBtnCompleteClicked(habitEntity)
+            }
         }
     }
 }
 
 interface OnRecyclerItemClicked {
     fun onRVItemClicked(habitEntity: HabitEntity)
+}
+
+interface OnBtnCompleteClickListener {
+    fun onBtnCompleteClicked(habitEntity: HabitEntity)
 }
 
 

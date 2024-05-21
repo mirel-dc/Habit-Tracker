@@ -1,6 +1,7 @@
 package com.example.presentation.di.module
 
 import com.example.domain.repository.HabitRepository
+import com.example.domain.use_case.CompleteHabitUseCase
 import com.example.domain.use_case.DeleteHabitUseCase
 import com.example.domain.use_case.GetHabitByIdUseCase
 import com.example.domain.use_case.GetHabitsUseCase
@@ -12,7 +13,6 @@ import dagger.Provides
 
 @Module
 class DomainModule {
-
     @Provides
     fun provideDeleteHabitUseCase(habitRepository: HabitRepository): DeleteHabitUseCase {
         return DeleteHabitUseCase(habitRepository = habitRepository)
@@ -41,5 +41,10 @@ class DomainModule {
     @Provides
     fun provideUpdateHabitUseCase(habitRepository: HabitRepository): UpdateHabitUseCase {
         return UpdateHabitUseCase(habitRepository = habitRepository)
+    }
+
+    @Provides
+    fun provideCompleteHabitUseCase(habitRepository: HabitRepository): CompleteHabitUseCase {
+        return CompleteHabitUseCase(habitRepository = habitRepository)
     }
 }

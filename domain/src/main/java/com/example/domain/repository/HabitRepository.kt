@@ -15,4 +15,6 @@ interface HabitRepository {
     suspend fun getHabitById(uuid: String): Habit
 
     suspend fun deleteHabit(habit: Habit)
+
+    fun completeHabit(habit: Habit): Flow<String>
 }

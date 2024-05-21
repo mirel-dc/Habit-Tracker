@@ -9,18 +9,25 @@ import androidx.lifecycle.viewModelScope
 import com.example.data.local.entity.HabitEntity
 import com.example.data.remote.dto.Mapper
 import com.example.domain.model.HabitType
+import com.example.domain.use_case.CompleteHabitUseCase
 import com.example.domain.use_case.DeleteHabitUseCase
 import com.example.domain.use_case.GetHabitsUseCase
 import com.example.domain.use_case.ImportHabitsUseCase
 import com.example.domain.use_case.InsertHabitUseCase
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+private const val TAG = "HabitListViewModel"
 
 class HabitListViewModel @Inject constructor(
     private val deleteHabitUseCase: DeleteHabitUseCase,
     private val getHabitsUseCase: GetHabitsUseCase,
     private val insertHabitUseCase: InsertHabitUseCase,
     private val importHabitsUseCase: ImportHabitsUseCase,
+    private val completeHabitUseCase: CompleteHabitUseCase,
 ) : ViewModel() {
 
     var habitsLiveData: LiveData<List<HabitEntity>> =
@@ -37,6 +44,9 @@ class HabitListViewModel @Inject constructor(
 
     private val _searchNameLiveData: MutableLiveData<String> = MutableLiveData()
     val searchNameLiveData: LiveData<String> = _searchNameLiveData
+
+    private val toastChannel = Channel<String>()
+    val toastFlow = toastChannel.receiveAsFlow()
 
     init {
         importHabitsFromApi()
@@ -57,10 +67,20 @@ class HabitListViewModel @Inject constructor(
         }
     }
 
+
+    fun btnCompleteClicked(habitEntity: HabitEntity) {
+        val job = viewModelScope.launch {
+            completeHabitUseCase(habitEntity.toHabit())
+                .collectLatest { result ->
+                    toastChannel.send(result)
+                }
+        }
+        //toastChannel.send(job)
+    }
+
     private fun importHabitsFromApi() {
         viewModelScope.launch {
             importHabitsUseCase()
-            //habitRepository.importHabitsFromApi()
         }
     }
 
@@ -70,12 +90,10 @@ class HabitListViewModel @Inject constructor(
 
     fun deleteHabit(habitEntity: HabitEntity) = viewModelScope.launch {
         deleteHabitUseCase(habitEntity.toHabit())
-        //habitRepository.deleteHabit(habitEntity)
     }
 
     fun createHabit(habitEntity: HabitEntity) = viewModelScope.launch {
         insertHabitUseCase(habitEntity.toHabit())
-        //habitRepository.insertHabit(habitEntity)
     }
 
     fun filterByAsc() {

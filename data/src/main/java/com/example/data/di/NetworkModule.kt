@@ -1,6 +1,6 @@
 package com.example.data.di
 
-import com.example.data.di.utils.RetrofitUtils
+import com.example.data.remote.utils.RetrofitUtils
 import com.example.data.remote.HabitApi
 import com.example.data.remote.gson
 import dagger.Module

@@ -1,5 +1,6 @@
 package com.example.data.repository
 
+import android.util.Log
 import com.example.data.local.db.HabitDao
 import com.example.data.remote.HabitApi
 import com.example.data.remote.dto.Mapper
@@ -9,6 +10,7 @@ import com.example.domain.model.Habit
 import com.example.domain.repository.HabitRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.Calendar
@@ -20,6 +22,26 @@ class HabitRepositoryImpl(
     private val api: HabitApi,
     private val dao: HabitDao
 ) : HabitRepository {
+
+    override fun completeHabit(habit: Habit): Flow<String> = flow {
+        updateHabit(habit.copy(executionQuantity = habit.executionQuantity++))
+        val donehabitdto = Mapper.fromHabitToDoneHabitDto(habit)
+        Log.d(TAG, donehabitdto.toString())
+        api.doneHabit(donehabitdto)
+//        val habitEntity = Mapper.fromHabitToHabitEntity(habit)
+//
+//        when (habitEntity.type) {
+//            HabitType.GOOD -> {
+//
+//            }
+//
+//            HabitType.BAD -> {
+//
+//            }
+//        }
+//
+//        emit(habitEntity.toString())
+    }
 
     override fun getHabits(): Flow<List<Habit>> = dao.getAllHabits().map { habits ->
         habits.map { habit ->
@@ -33,7 +55,12 @@ class HabitRepositoryImpl(
             val remoteHabits = retryIO { api.getHabitsList() }
             if (remoteHabits.isSuccessful) {
                 dao.nukeHabits()
-                dao.importHabits(remoteHabits.body()!!.map { it.toHabitEntity() })
+                remoteHabits.body()?.let { list ->
+                    dao.importHabits(
+                        list.map { item ->
+                            item.toHabitEntity()
+                        })
+                }
             }
         }
     }
@@ -49,8 +76,6 @@ class HabitRepositoryImpl(
             if (habitUid.isSuccessful) {
                 dao.insert(habitDto.copy(id = habitUid.body()?.uid.toString()).toHabitEntity())
             }
-            //TODO fix ids
-            //importHabitsFromApi()
         }
     }
 

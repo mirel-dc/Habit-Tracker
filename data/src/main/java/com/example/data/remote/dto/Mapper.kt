@@ -4,6 +4,7 @@ import com.example.data.local.entity.HabitEntity
 import com.example.domain.model.Habit
 import com.example.domain.model.HabitPriority
 import com.example.domain.model.HabitType
+import java.util.Calendar
 import java.util.UUID
 
 object Mapper {
@@ -32,6 +33,13 @@ object Mapper {
             executionQuantity = habit.executionQuantity,
             frequency = habit.frequency,
             color = habit.color.toInt(),
+        )
+    }
+
+    fun fromHabitToDoneHabitDto(habit: Habit): DoneHabitDto {
+        return DoneHabitDto(
+            date = (Calendar.getInstance().timeInMillis),
+            habitUid = habit.id
         )
     }
 }
