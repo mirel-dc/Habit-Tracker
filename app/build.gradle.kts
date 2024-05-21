@@ -50,8 +50,8 @@ dependencies {
     //Dagger
     implementation("com.google.dagger:dagger:2.51.1")
     kapt("com.google.dagger:dagger-compiler:2.51.1")
-    implementation("javax.inject:javax.inject:1")
 
+    //Network
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
 
 
