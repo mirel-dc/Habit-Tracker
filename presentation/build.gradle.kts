@@ -63,6 +63,15 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.12.0")
+
+    //UI Test
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-accessibility:3.5.1")
+    androidTestImplementation("androidx.test.espresso.idling:idling-concurrent:3.5.1")
+
+    val fragment_version = "1.7.1"
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
 }

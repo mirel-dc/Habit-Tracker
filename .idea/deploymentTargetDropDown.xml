@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="CreateHabitFragmentTest">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -17,6 +20,9 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-05-16T16:26:13.655905400Z" />
         </State>
+      </entry>
+      <entry key="testCreateHabit()">
+        <State />
       </entry>
     </value>
   </component>
