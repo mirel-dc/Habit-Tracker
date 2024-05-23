@@ -1,8 +1,6 @@
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import com.example.data.local.entity.HabitEntity
 import com.example.domain.model.Habit
-import com.example.domain.model.HabitCountState
 import com.example.domain.model.HabitPriority
 import com.example.domain.model.HabitType
 import com.example.domain.use_case.CompleteHabitUseCase
@@ -11,11 +9,9 @@ import com.example.domain.use_case.FilterAndSearchHabitsUseCase
 import com.example.domain.use_case.GetHabitsUseCase
 import com.example.domain.use_case.ImportHabitsUseCase
 import com.example.domain.use_case.InsertHabitUseCase
-import com.example.presentation.utils.GetResIdFromEnum
 import com.example.presentation.viewmodels.HabitListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain

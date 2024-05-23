@@ -4,7 +4,6 @@ import com.example.domain.model.Habit
 import com.example.domain.model.HabitPriority
 import com.example.domain.model.HabitType
 import com.example.domain.repository.HabitRepository
-import com.example.domain.use_case.CompleteHabitUseCase
 import com.example.domain.use_case.DeleteHabitUseCase
 import com.example.habittracker.utils.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,7 +23,7 @@ class DeleteHabitUseCaseTest {
     @get:Rule
     val coroutineRule = MainCoroutineRule()
 
-    private lateinit var deleteHabitUseCase : DeleteHabitUseCase
+    private lateinit var deleteHabitUseCase: DeleteHabitUseCase
     private val fakeHabitRepo: HabitRepository = mock()
 
     @Before
