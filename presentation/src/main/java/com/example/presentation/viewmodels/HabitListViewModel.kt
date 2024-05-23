@@ -78,7 +78,7 @@ class HabitListViewModel @Inject constructor(
         }
     }
 
-    private fun importHabitsFromApi() {
+    fun importHabitsFromApi() {
         viewModelScope.launch {
             importHabitsUseCase()
         }
