@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Habit Tracker</string>
+
+    <string name="habit_name">Название привычки</string>
+    <string name="habit_description">Описание привычки</string>
+    <string name="submit">Подтвердить</string>
+    <string name="quantity_of_habit_fulfillment">Количество выполнений Привычки</string>
+    <string name="times_per_week">Повторений в Неделю</string>
+    <string name="choose_priority">Выберите Приоритет:</string>
+    <string name="required">Необходимо заполнить</string>
+    <string name="invalid_form">Неправильная форма</string>
+    <string name="cannot_be_empty">Не может быть Пустым</string>
+    <string name="cannot_be_more_then_7">Не может быть больше 7</string>
+    <string name="current_color_hsv_rgb">Текущий цвет: HSV(%1$.2f,1,1); RGB(%2$d,%3$d,%4$d)</string>
+    <string name="priority">"Приоритет: "</string>
+    <string name="week">%1$s / в Неделю</string>
+    <string name="habit_type">Тип Привычки:</string>
+    <string name="good_habit">Полезная</string>
+    <string name="bad_habit">Вредная</string>
+    <string name="home">Домашняя страница</string>
+    <string name="info">Информация</string>
+    <string name="create_new_habit">Добавить привычку</string>
+    <string name="filter_and_search">Фильтр и поиск</string>
+    <string name="sort_by_date_edited">Сортировать по дате редактирования</string>
+    <string name="filter_ascending">Фильтровать по возрастанию</string>
+    <string name="filter_descending">Фильтровать по убыванию</string>
+    <string name="successfully_deleted_habit">Привычка успешно удалена</string>
+    <string name="undo">Отмена</string>
+    <string name="incorrectly_filled_fields">Неправильно заполнены поля</string>
+    <string name="high">Высокий</string>
+    <string name="medium">Средний</string>
+    <string name="low">Низкий</string>
+    <string name="great_job_keep_doing_it">Отлично. Продолжай в том же духе!</string>
+    <string name="you_are_breathtaking">You are Breathtaking!</string>
+    <string name="stop_doing_it">Переставай делать это</string>
+    <string name="no_more">Хватит это делать!</string>
+</resources>

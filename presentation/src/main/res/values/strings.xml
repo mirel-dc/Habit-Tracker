@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Habit Tracker</string>
+    <!-- com.example.domain.model.HabitType Descriptions start -->
+    <string name="good_habit">Good</string>
+    <string name="bad_habit">Bad</string>
+    <!-- com.example.domain.model.HabitType Descriptions end -->
+
+    <!-- Create Habit Page start -->
+    <string name="habit_name">Habit name</string>
+    <string name="habit_description">Habit description</string>
+    <string name="submit">Submit</string>
+    <string name="quantity_of_habit_fulfillment">Quantity of Habit fulfillment</string>
+    <string name="times_per_week">Times per Week</string>
+    <string name="choose_priority">Choose Priority:</string>
+    <string name="current_color_hsv_rgb">Current Color: HSV(%1$.1f,1,1); RGB(%2$d,%3$d,%4$d)</string>
+    <!-- Create Habit Page end -->
+
+    <!-- Create Habit Page EditText Warnings/Errors start -->
+    <string name="required">Required</string>
+    <string name="invalid_form">Invalid Form</string>
+    <string name="cannot_be_empty">Cannot be Empty</string>
+    <string name="cannot_be_more_then_7">Cannot be more then 7</string>
+    <!-- Create Habit Page EditText Warnings/Errors end -->
+
+    <!-- Habit Item start -->
+    <string name="priority">Priority:</string>
+    <string name="week">%1$s / Week</string>
+    <string name="habit_type">Habit Type:</string>
+    <!-- Habit Item start -->
+
+    <!-- Navigation Item start -->
+    <string name="home">Home</string>
+    <string name="info">Info</string>
+    <string name="create_new_habit">Create new Habit</string>
+    <string name="filter_and_search">Filter and search</string>
+    <string name="sort_by_date_edited">Sort by date edited</string>
+    <string name="filter_ascending">Filter ascending</string>
+    <string name="filter_descending">Filter descending</string>
+    <string name="successfully_deleted_habit">Successfully deleted habit</string>
+    <string name="undo">Undo</string>
+    <string name="incorrectly_filled_fields">Incorrectly filled fields</string>
+    <string name="high">High</string>
+    <string name="medium">Medium</string>
+    <string name="low">Low</string>
+    <string name="great_job_keep_doing_it">Great job! Keep doing it!</string>
+    <string name="you_are_breathtaking">You are Breathtaking!</string>
+    <string name="stop_doing_it">Stop doing it</string>
+    <string name="no_more">No more!</string>
+    <!-- Navigation Item end -->
+
+
+</resources>
